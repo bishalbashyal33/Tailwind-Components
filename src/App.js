@@ -8,15 +8,21 @@ import {
   Link
 } from 'react-router-dom';
 import Footer from "./components/footer";
+import HomePage from "./pages/homepage";
 
 
 export default function App() {
   return (
    <>
-  
+   <Router>
    <Navbar />
-   <HeroSection/>
+  
+   <Routes>
+   <Route exact path="/" element={<HomePage />} />
+   </Routes>
+   
    <Footer/>
+   </Router>
    </>
   );
 }
