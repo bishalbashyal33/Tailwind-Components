@@ -12,6 +12,8 @@ import HomePage from "./pages/homepage";
 import UploadPage from "./pages/uploadpage";
 import LogIn from "./pages/login";
 import SignUp from "./pages/signup";
+import DashBoard from "./pages/dashboard";
+import AboutPage from "./pages/about";
 
 
 export default function App() {
@@ -25,6 +27,8 @@ export default function App() {
    <Route exact path="/UploadPage" element={<UploadPage />} />
    <Route exact path="/login" element={<LogIn />} />
    <Route exact path="/signup" element={<SignUp />} />
+   <Route exact path="/dashboard" element={<DashBoard />} />
+   <Route exact path="/about" element={<AboutPage/>} />
    </Routes>
    
    <Footer/>
