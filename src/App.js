@@ -5,6 +5,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  useLocation,
   Link
 } from 'react-router-dom';
 import Footer from "./components/footer";
@@ -14,13 +15,17 @@ import LogIn from "./pages/login";
 import SignUp from "./pages/signup";
 import DashBoard from "./pages/dashboard";
 import AboutPage from "./pages/about";
+import JsonPage from "./pages/jsonpage";
 
 
 export default function App() {
+  
   return (
    <>
    <Router>
-   <Navbar />
+   {window.location.pathname !== '/dashboard' && window.location.pathname !== '/jsonpage' && <Navbar />}
+
+
   
    <Routes>
    <Route exact path="/" element={<HomePage />} />
@@ -29,9 +34,11 @@ export default function App() {
    <Route exact path="/signup" element={<SignUp />} />
    <Route exact path="/dashboard" element={<DashBoard />} />
    <Route exact path="/about" element={<AboutPage/>} />
+   <Route exact path="/jsonpage" element={<JsonPage/>} />
    </Routes>
    
-   <Footer/>
+   {window.location.pathname !== '/dashboard' && window.location.pathname !== '/jsonpage' && <Footer />}
+   
    </Router>
    </>
   );

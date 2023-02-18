@@ -5,7 +5,21 @@ module.exports = {
     "./node_modules/flowbite/**/*.js",
   ],
   theme: {
-    extend: {},
+    extend: {
+      width: {
+        '600': '504px' ,
+        '800': '704px',
+        '1000':'904px',
+      },
+      height: {
+        '600': '504px' ,
+        '800': '704px',
+        '1000':'904px',
+      }
+
+    },
   },
-  plugins: [require('flowbite/plugin')],
+  plugins: [require('flowbite/plugin'),
+  require('tailwind-scrollbar-hide')],
+ 
 }
