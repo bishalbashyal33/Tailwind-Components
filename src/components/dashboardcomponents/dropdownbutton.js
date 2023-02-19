@@ -39,10 +39,11 @@ function DDButton(props) {
         >
           <li>
             <a
-              href="#"
+              href="#" data-modal-target="staticModal" data-modal-toggle="staticModal"
               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             >
-              File Upload
+              File Upload 
+
             </a>
           </li>
           <li>

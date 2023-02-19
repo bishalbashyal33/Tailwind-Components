@@ -5,6 +5,7 @@ import DocType from "../components/dashboardcomponents/doctype";
 import HeroSection from "../components/herosection";
 import TButton from "../components/tbutton";
 import DDButton from "../components/dashboardcomponents/dropdownbutton";
+import UPopup from "../components/uploadpopup";
 
 function DashBoard(props) {
   const [activeTab, setActiveTab] = useState("DocumentType");
@@ -14,7 +15,14 @@ function DashBoard(props) {
   };
 
   return (
-    <div class="container">
+    <div class="container h-screen">
+
+
+
+<UPopup/>
+
+
+
       {/* <div class=" relative overflow-x-auto shadow-md sm:rounded-lg">
     <div class="pb-4 pt-4 pl-4 bg-white dark:bg-gray-900">
         <label for="table-search" class="sr-only">Search</label>

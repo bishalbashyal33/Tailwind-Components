@@ -37,7 +37,7 @@ export default function App() {
    <Route exact path="/jsonpage" element={<JsonPage/>} />
    </Routes>
    
-   {window.location.pathname !== '/dashboard' && window.location.pathname !== '/jsonpage' && <Footer />}
+   {window.location.pathname !== '/jsonpage' && <Footer />}
    
    </Router>
    </>
