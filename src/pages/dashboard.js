@@ -6,12 +6,43 @@ import HeroSection from "../components/herosection";
 import TButton from "../components/tbutton";
 import DDButton from "../components/dashboardcomponents/dropdownbutton";
 import UPopup from "../components/uploadpopup";
+import MyDocuments from "../components/sidebar/mydocuments";
+import DocumentTypes from "../components/sidebar/documenttypes";
+import APIService from "../components/sidebar/apiservices";
+import ModelTraining from "../components/sidebar/modeltraining";
+import Settings from "../components/sidebar/settings";
 
 function DashBoard(props) {
   const [activeTab, setActiveTab] = useState("DocumentType");
+ 
 
   const handleTabClick = (tab) => {
+    var prevTab = document.getElementById(activeTab);
+    if(prevTab)
+    prevTab.classList.remove('dark:bg-gray-700');
     setActiveTab(tab);
+    
+    var element = document.getElementById(tab);
+   
+    element.classList.add('dark:bg-gray-700');
+  };
+
+  const renderPageContent = () => {
+    switch (activeTab) {
+      case "MyDocuments":
+        return <MyDocuments />;
+      case "DocumentType":
+        return <DocumentTypes />;
+      case "API&Services":
+        return <APIService />;
+      // add cases for other tabs
+      case "Model&Training":
+        return <ModelTraining />;
+      case "Settings":
+          return <Settings />;
+      default:
+        return <DocumentTypes />;
+    }
   };
 
   return (
@@ -335,6 +366,7 @@ function DashBoard(props) {
                 href="#"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => handleTabClick("DocumentTypes")}
+                id="DocumentTypes"
               >
                 <svg
                   aria-hidden="true"
@@ -352,6 +384,8 @@ function DashBoard(props) {
             <li>
               <a
                 href="#"
+                onClick={() => handleTabClick("MyDocuments")}
+                id="MyDocuments"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -371,7 +405,8 @@ function DashBoard(props) {
             </li>
             <li>
               <a
-                href="#"
+                href="#" onClick={() => handleTabClick("Model&Training")}
+                id="Model&Training"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -394,7 +429,8 @@ function DashBoard(props) {
             </li>
             <li>
               <a
-                href="#"
+                href="#" onClick={() => handleTabClick("API&Services")}
+                id="API&Services"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -417,7 +453,8 @@ function DashBoard(props) {
             </li>
             <li>
               <a
-                href="#"
+                href="#" onClick={() => handleTabClick("Settings")}
+                id="Settings"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -438,7 +475,7 @@ function DashBoard(props) {
             </li>
             <li>
               <a
-                href="#"
+                href="#" onClick={() => handleTabClick("SignIn")}
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -459,7 +496,7 @@ function DashBoard(props) {
             </li>
             <li>
               <a
-                href="#"
+                href="#" onClick={() => handleTabClick("SignOut")}
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -482,13 +519,8 @@ function DashBoard(props) {
         </div>
       </aside>
 
-      <div class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-         
-            <DocType />
-         
-        </div>
-      </div>
+{renderPageContent()}
+    
     </div>
   );
 }

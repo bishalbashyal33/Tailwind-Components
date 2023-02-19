@@ -1,6 +1,54 @@
-import React from "react";
+import React,{useState} from "react";
+import { saveAs } from "file-saver";
 
-function TButton(props) {
+function UPopup(props) {
+
+    const [file, setFile] = useState(null);
+    const handleFileSelect = () => {
+        const fileInput = document.createElement("input");
+        const image = document.getElementById("selected-image");
+        
+      fileInput.type = "file";
+
+      // Add an event listener for when a file is selected
+      fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        // Add an event listener for when the file is loaded
+        reader.addEventListener("load", () => {
+         
+          image.src = reader.result;
+        });
+
+        // Load the selected file
+        reader.readAsDataURL(file);
+      });
+
+      // Trigger a click event on the file input element
+      fileInput.click();
+      };
+
+    
+      const handleUpload = async (event) => {
+        event.preventDefault();
+    
+        // if (file) {
+        //     const selectedImage = document.getElementById('selected-image');
+        //     const reader = new FileReader();
+        //     reader.readAsDataURL(file);
+
+        //     selectedImage.setAttribute('src',reader.result);
+        // }
+      };
+
+  
+    
+    
+
+
+
+
   return (
     <div
       id="staticModal"
@@ -36,17 +84,18 @@ function TButton(props) {
           </div>
 
           <div class="p-6 space-y-6 ">
-            <img
+            <img id="selected-image"
               class="h-72 w-full"
-              src="https://silentsystem.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
-              alt="image description"
+             src="https://silentsystem.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
+             // alt="image description"
             />
           </div>
 
           <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
             <button
               //data-modal-hide="staticModal"
-              type="button"
+              type="button" id="select-image-button"
+              onClick={handleFileSelect}
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Select Image
@@ -54,6 +103,7 @@ function TButton(props) {
             <button
             //  data-modal-hide="staticModal"
               type="button"
+              onClick={handleUpload}
               class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
               Upload
@@ -65,4 +115,4 @@ function TButton(props) {
   );
 }
 
-export default TButton;
+export default UPopup;
