@@ -1,38 +1,40 @@
-import React,{useState} from "react";
-import { saveAs } from "file-saver";
+import React, { useState } from 'react'
+import { saveAs } from 'file-saver'
+import axios from 'axios'
+import BASE_URL from '../backend'
 
 function UPopup(props) {
-
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState(null)
     const handleFileSelect = () => {
-        const fileInput = document.createElement("input");
-        const image = document.getElementById("selected-image");
-        
-      fileInput.type = "file";
+        const fileInput = document.createElement('input')
+        const image = document.getElementById('selected-image')
 
-      // Add an event listener for when a file is selected
-      fileInput.addEventListener("change", (event) => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
+        fileInput.type = 'file'
 
-        // Add an event listener for when the file is loaded
-        reader.addEventListener("load", () => {
-         
-          image.src = reader.result;
-        });
+        // Add an event listener for when a file is selected
+        fileInput.addEventListener('change', (event) => {
+            const temp_file = event.target.files[0]
+            setFile(temp_file)
+            const reader = new FileReader()
 
-        // Load the selected file
-        reader.readAsDataURL(file);
-      });
+            // Add an event listener for when the file is loaded
+            reader.addEventListener('load', () => {
+                image.src = reader.result
+            })
 
-      // Trigger a click event on the file input element
-      fileInput.click();
-      };
+            // Load the selected file
+            reader.readAsDataURL(file)
+        })
 
-    
-      const handleUpload = async (event) => {
-        event.preventDefault();
-    
+        // Trigger a click event on the file input element
+        fileInput.click()
+    }
+
+    const handleUpload = async (event) => {
+        console.log('Clicked upload button')
+        console.log(file)
+        event.preventDefault()
+
         // if (file) {
         //     const selectedImage = document.getElementById('selected-image');
         //     const reader = new FileReader();
@@ -40,79 +42,86 @@ function UPopup(props) {
 
         //     selectedImage.setAttribute('src',reader.result);
         // }
-      };
+        if (file) {
+            // Create a FormData object
+            const formData = new FormData()
+            formData.append('file', file, file.name)
 
-  
-    
-    
+            // Send the FormData object as the request body in the POST request
+            const response = await axios.post(
+                `${BASE_URL}/annotation/post/${props.selectedDocType}`,
+                formData
+            )
+            console.log(response.data)
+        }
+    }
 
+    return (
+        <div
+            id="staticModal"
+            data-modal-backdrop="static"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed top-24 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto  overflow md:inset-0 h-modal :h-full"
+        >
+            <div class="relative w-full h-full max-w-2xl md:h-auto">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Upload Your Document Image
+                        </h3>
+                        <button
+                            type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                            data-modal-hide="staticModal"
+                        >
+                            <svg
+                                class="w-5 h-5"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                    clip-rule="evenodd"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
 
+                    <div class="p-6 space-y-6 ">
+                        <img
+                            id="selected-image"
+                            class="h-72 w-full"
+                            src="https://silentsystem.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
+                            // alt="image description"
+                        />
+                    </div>
 
-
-  return (
-    <div
-      id="staticModal"
-      data-modal-backdrop="static"
-      tabindex="-1"
-      aria-hidden="true"
-      class="fixed top-24 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto  overflow md:inset-0 h-modal :h-full"
-    >
-      <div class="relative w-full h-full max-w-2xl md:h-auto">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-          <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-              Upload Your Document Image
-            </h3>
-            <button
-              type="button"
-              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-              data-modal-hide="staticModal"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <div class="p-6 space-y-6 ">
-            <img id="selected-image"
-              class="h-72 w-full"
-             src="https://silentsystem.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
-             // alt="image description"
-            />
-          </div>
-
-          <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-            <button
-              //data-modal-hide="staticModal"
-              type="button" id="select-image-button"
-              onClick={handleFileSelect}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Select Image
-            </button>
-            <button
-            //  data-modal-hide="staticModal"
-              type="button"
-              onClick={handleUpload}
-              class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-            >
-              Upload
-            </button>
-          </div>
+                    <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <button
+                            //data-modal-hide="staticModal"
+                            type="button"
+                            id="select-image-button"
+                            onClick={handleFileSelect}
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            Select Image
+                        </button>
+                        <button
+                            //  data-modal-hide="staticModal"
+                            type="button"
+                            onClick={handleUpload}
+                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+                        >
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    )
 }
 
-export default UPopup;
+export default UPopup

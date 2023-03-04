@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import MyButton from '../components/button'
 import DocType from '../components/dashboardcomponents/doctype'
@@ -12,9 +12,12 @@ import APIService from '../components/sidebar/apiservices'
 import ModelTraining from '../components/sidebar/modeltraining'
 import Settings from '../components/sidebar/settings'
 import axios from 'axios'
+import BASE_URL from '../backend'
 
 function DashBoard(props) {
     const [activeTab, setActiveTab] = useState('DocumentType')
+    const [docTypes, setDocTypes] = useState([])
+    const [selectedDocType, setSelectedDocType] = useState(null)
 
     const handleTabClick = (tab) => {
         var prevTab = document.getElementById(activeTab)
@@ -25,6 +28,21 @@ function DashBoard(props) {
 
         element.classList.add('dark:bg-gray-700')
     }
+
+    useEffect(() => {
+        // Get all the document types
+        axios(`${BASE_URL}/doc_type/get_all/`, {
+            method: 'GET',
+            withCredentials: true,
+        })
+            .then((res) => {
+                console.log(res)
+                setDocTypes(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [])
 
     const renderPageContent = () => {
         switch (activeTab) {
@@ -46,7 +64,7 @@ function DashBoard(props) {
 
     return (
         <div class="container h-screen">
-            <UPopup />
+            <UPopup selectedDocType={selectedDocType} />
             <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="px-3 py-3 lg:px-5 lg:pl-3">
                     <div class="flex items-center justify-between">
@@ -177,7 +195,10 @@ function DashBoard(props) {
                 <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
                     <ul class="space-y-2">
                         <li>
-                            <DDButton />
+                            <DDButton
+                                docTypes={docTypes}
+                                setSelectedDocType={setSelectedDocType}
+                            />
                         </li>
                         <li>
                             <a

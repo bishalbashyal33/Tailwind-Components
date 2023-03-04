@@ -2,19 +2,20 @@ import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import TButton from '../tbutton'
 import Th from './thcomponent'
+import BASE_URL from '../../backend'
 
 function MyDocuments(props) {
     const [documents, setDocuments] = useState([])
     const [selected, setSelected] = useState([])
 
     useEffect(() => {
-        axios('http://localhost:5000/getdocuments', {
+        axios(`${BASE_URL}/get_documents`, {
             method: 'GET',
-            withCredentials: false,
+            withCredentials: true,
         })
             .then((res) => {
-                console.log(res)
-                setDocuments(res.data.data)
+                console.log(res.data)
+                setDocuments(res.data.documents)
             })
             .catch((err) => {
                 console.log(err)
@@ -31,6 +32,30 @@ function MyDocuments(props) {
 
     const handleDelete = (event) => {
         console.log('Selected Elements: ', selected)
+
+        axios
+            .post(
+                `${BASE_URL}/annotation/delete_multiple`,
+                selected,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
+            .then((res) => {
+                setSelected(res.data.success)
+                setDocuments((prev) =>
+                    prev.filter(
+                        (doc) => !res.data.success.includes(doc.image_id)
+                    )
+                )
+                console.log('Successfully deleted ', res.data.success)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     return (
@@ -108,13 +133,16 @@ function MyDocuments(props) {
                                 {documents &&
                                     documents.map((doc) => (
                                         <Th
+                                            key={doc.image_id}
                                             documents={documents}
                                             selected={selected}
                                             setSelected={setSelected}
-                                            docId={doc.id}
-                                            docname={doc.name}
-                                            docuploadedby={doc.uploadedby}
-                                            doctype={doc.doctype}
+                                            docId={doc.image_id}
+                                            docname={doc.image_id}
+                                            docuploadedby={
+                                                'Aayush' || doc?.uploadedby
+                                            }
+                                            doctype={doc.doc_type_id}
                                             docstatus={doc.status}
                                             docaction="Edit"
                                         />

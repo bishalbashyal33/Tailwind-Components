@@ -5,15 +5,18 @@ import TButton from '../components/tbutton'
 import { Link } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
+import BASE_URL from '../backend'
 
 import './annotation.css'
 
 function AnnotationPage(props) {
-    const { docType } = useParams()
+    const { docId } = useParams()
     const location = useLocation()
     const documentList = location.state.documents
+    console.log(documentList)
 
-    const [acutalBboxes, setActualBboxes] = useState([])
+    const [actualBboxes, setactualBboxes] = useState([])
+    const [metadata, setMetadata] = useState({})
     const [fields, setFields] = useState([])
     const [currentField, setCurrentField] = useState(0)
     const [bboxes, setBboxes] = useState([])
@@ -21,6 +24,7 @@ function AnnotationPage(props) {
     const [height, setHeight] = useState(0)
     const [rect, setRect] = useState({})
     const [currentDocumentIndex, setCurrentDocumentIndex] = useState(null)
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
     const [startX, setStartX] = useState(0)
     const [startY, setStartY] = useState(0)
@@ -37,77 +41,53 @@ function AnnotationPage(props) {
     }
 
     useEffect(() => {
-        console.log(Math.max(5, 4))
-
         setCurrentDocumentIndex((prev) => {
-            if (documentList.findIndex((doc) => doc.id == docType))
-                return documentList.findIndex((doc) => doc.id == docType)
+            if (documentList.findIndex((doc) => doc.image_id == docId))
+                return documentList.findIndex((doc) => doc.image_id == docId)
             else return 0
         })
-        axios(`http://localhost:5000/doc/${docType}`, {
+        const y = documentList.findIndex((doc) => doc.image_id == docId) || 0
+        console.log(
+            'new indexes',
+            Math.max(y - 1, 0),
+            Math.min(y + 1, documentList.length - 1)
+        )
+        console.log(
+            'documentList: ',
+            documentList[Math.min(y + 1, documentList.length - 1)],
+            documentList[Math.max(y - 1, 0)]
+        )
+        axios(`${BASE_URL}/annotate/get/${docId}`, {
             method: 'GET',
-            withCredentials: false,
+            withCredentials: true,
         })
             .then((res) => {
-                console.log(
-                    res.data.data.fields.map((field) => ({
-                        id: field.id,
-                        name: field.name,
-                        type: field.type,
-                        value: '',
-                        bboxes: [],
-                        indexes: [],
-                    }))
-                )
+                console.log(res)
+                setMetadata(res.data.metadata)
+                setRect(res.data.annotation.map((field) => []))
+
+                // reads and saves the information of the field
                 setFields(
-                    res.data.data.fields.map((field) => ({
+                    res.data.annotation.map((field) => ({
                         id: field.id,
                         name: field.name,
-                        type: field.type,
-                        value: '',
-                        bboxes: [],
-                        indexes: [],
+                        value: field.value || '',
+                        word_ids: field.word_ids || [],
                     }))
                 )
-                setRect(res.data.data.fields.map((field) => []))
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-
-        axios('http://localhost:5000/review', {
-            method: 'GET',
-            withCredentials: false,
-        })
-            .then((res) => {
-                setActualBboxes(res.data.data)
+                setactualBboxes(res.data.ocr_data)
                 calculateBboxDimensions(
-                    res.data.data,
-                    res.data.height,
-                    res.data.width
+                    res.data.ocr_data,
+                    774 || res.data.height,
+                    1492 || res.data.width
                 )
-                setHeight(res.data.height)
-                setWidth(res.data.width)
+                setHeight(774 || res.data.height)
+                setWidth(1492 || res.data.width)
             })
             .catch((err) => {
                 console.log(err)
             })
-        console.log(documentList)
-        console.log(currentDocumentIndex)
-        console.log(
-            'ge',
-            Math.min(currentDocumentIndex + 1, documentList.length - 1)
-        )
-        console.log(
-            'sf',
-            documentList[
-                Math.min(currentDocumentIndex + 1, documentList.length - 1)
-            ]
-        )
-
-        console.log(Math.max(currentDocumentIndex - 1, 0))
-        console.log(documentList[Math.max(currentDocumentIndex - 1, 0)])
-    }, [docType])
+    }, [docId])
 
     const imageWidth = `${zoom}%`
 
@@ -144,13 +124,11 @@ function AnnotationPage(props) {
         if (event.ctrlKey) {
             fields[currentField]['value'] =
                 fields[currentField]['value'] + ' ' + bbox[4]
-            fields[currentField]['bboxes'].push(bbox)
             fields[currentField]['indexes'].push(index)
             setFields([...fields])
         } else {
             fields[currentField]['value'] = bbox[4]
-            fields[currentField]['bboxes'] = [bbox]
-            fields[currentField]['indexes'] = [index]
+            fields[currentField]['word_ids'] = [index]
             setFields([...fields])
         }
     }
@@ -188,9 +166,27 @@ function AnnotationPage(props) {
         })
     }
 
-    const handleMouseDown = (event) => {
+    const handleMouseUp = () => {
         console.log(fields)
+        console.log('Inside the mouse up')
+    }
+
+    const handleMouseDown = (event) => {
         console.log('Inside the mouse down')
+        if (isDrawing) {
+            let temp = fileteredBboxes()
+            rect[currentField] = [startX, startY, endX, endY]
+            setRect([...rect])
+            fields[currentField]['value'] = ''
+            fields[currentField]['word_ids'] = []
+            for (let i = 0; i < temp.length; i++) {
+                fields[currentField]['value'] =
+                    fields[currentField]['value'] + ' ' + temp[i][4]
+                fields[currentField]['word_ids'].push(temp[i][5])
+            }
+            setFields([...fields])
+        }
+        setIsDrawing(false)
     }
 
     const handleMouseMove = (event) => {
@@ -203,11 +199,9 @@ function AnnotationPage(props) {
         setEndY(event.clientY - boundingRect.top + event.target.offsetTop)
     }
 
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
-
     const handleScrollEvent = (event) => {
         calculateBboxDimensions(
-            acutalBboxes,
+            actualBboxes,
             height,
             width,
             event.target.scrollTop
@@ -215,26 +209,8 @@ function AnnotationPage(props) {
     }
 
     useEffect(() => {
-        calculateBboxDimensions(acutalBboxes, height, width)
+        calculateBboxDimensions(actualBboxes, height, width)
     }, [zoom])
-
-    const handleMouseUp = () => {
-        if (isDrawing) {
-            let temp = fileteredBboxes()
-            rect[currentField] = [startX, startY, endX, endY]
-            setRect([...rect])
-            fields[currentField]['value'] = ''
-            for (let i = 0; i < temp.length; i++) {
-                console.log('Here bbox', temp[i])
-                fields[currentField]['value'] =
-                    fields[currentField]['value'] + ' ' + temp[i][4]
-                fields[currentField]['bboxes'].push(temp[i])
-                fields[currentField]['indexes'].push(temp[i][5])
-            }
-            setFields([...fields])
-        }
-        setIsDrawing(false)
-    }
 
     const rectStyle = {
         position: 'absolute',
@@ -247,7 +223,7 @@ function AnnotationPage(props) {
     }
 
     window.onresize = () => {
-        calculateBboxDimensions(acutalBboxes, height, width)
+        calculateBboxDimensions(actualBboxes, height, width)
     }
 
     const handleAnnotationSave = (event) => {
@@ -255,13 +231,19 @@ function AnnotationPage(props) {
         console.log(fields)
         let formdata = new FormData()
         formdata.append('fields', JSON.stringify(fields))
-        axios(`http://localhost:5000/annotate/${docType}`, {
-            method: 'POST',
-            withCredentials: false,
-            data: formdata,
-        })
+        axios
+            .post(
+                `${BASE_URL}/annotate/${docId}`,
+                { annotation: fields },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
             .then((res) => {
-                console.log(res)
+                console.log('Successfully annotated ', res)
             })
             .catch((err) => {
                 console.log(err)
@@ -271,64 +253,73 @@ function AnnotationPage(props) {
     return (
         <div class="mt-12 pb-24 dark:bg-gray-800">
             <div class="fixed z-20 bottom-0  left-0 pt-6 px-4 flex-shrink-0  w-550 mt-200 border border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <div>{metadata?.status}</div>
                 <div class="flex flex-grow justify-start">
-                    <TButton label="+ Add Section"></TButton>
+                    <a href={`${BASE_URL}/annotate/download/${docId}`} download>
+                        <TButton label="Download Annotation"></TButton>
+                    </a>
                     <TButton
                         onClick={handleAnnotationSave}
                         label="Save & Close"
                     ></TButton>
                 </div>
                 <div class="flex justify-between">
-                    <Link
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                        to={`/annotate/${
-                            documentList[Math.max(currentDocumentIndex - 1, 0)][
-                                'id'
-                            ]
-                        }`}
-                        state={{ documents: documentList }}
-                    >
-                        <svg
-                            class="ml-2 -mr-1 w-5 h-5 "
-                            fill="White"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
+                    {documentList && (
+                        <Link
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                            to={`/annotate/${
+                                documentList[
+                                    Math.max(currentDocumentIndex - 1, 0)
+                                ]['image_id']
+                            }`}
+                            state={{ documents: documentList }}
                         >
-                            <path
-                                clip-rule="evenodd"
-                                fill-rule="evenodd"
-                                d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                            ></path>
-                        </svg>
-                    </Link>
-                    <span class="text-white">1 of 1</span>
-                    <Link
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                        to={`/annotate/${
-                            documentList[
-                                Math.min(
-                                    currentDocumentIndex + 1,
-                                    documentList.length - 1
-                                )
-                            ]['id']
-                        }`}
-                        state={{ documents: documentList }}
-                    >
-                        <svg
-                            class="ml-2 mr-2 w-5 h-5 "
-                            fill="White"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
+                            <svg
+                                class="ml-2 -mr-1 w-5 h-5 "
+                                fill="White"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    clip-rule="evenodd"
+                                    fill-rule="evenodd"
+                                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                                ></path>
+                            </svg>
+                        </Link>
+                    )}
+                    <span class="text-white">
+                        {currentDocumentIndex + 1} of {documentList.length}
+                    </span>
+                    {documentList && (
+                        <Link
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                            to={`/annotate/${
+                                documentList[
+                                    Math.min(
+                                        currentDocumentIndex + 1,
+                                        documentList.length - 1
+                                    )
+                                ]['image_id']
+                            }`}
+                            state={{ documents: documentList }}
                         >
-                            <path
-                                clip-rule="evenodd"
-                                fill-rule="evenodd"
-                                d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                            ></path>
-                        </svg>
-                    </Link>
+                            <svg
+                                class="ml-2 mr-2 w-5 h-5 "
+                                fill="White"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    clip-rule="evenodd"
+                                    fill-rule="evenodd"
+                                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                ></path>
+                            </svg>
+                        </Link>
+                    )}
                 </div>
             </div>
 
@@ -371,7 +362,7 @@ function AnnotationPage(props) {
                     >
                         <img
                             ref={imageRef}
-                            src={'http://localhost:5000/image/1'}
+                            src={`${BASE_URL}/annotation/get_file/${docId}`}
                             alt="Document Image"
                             id="document-image"
                             class="h-890 mx-auto  object-contain"

@@ -17,6 +17,7 @@ import DashBoard from './pages/dashboard'
 import AboutPage from './pages/about'
 import JsonPage from './pages/jsonpage'
 import AnnotationPage from './pages/annotation'
+import Login from './test'
 
 export default function App() {
     return (
@@ -29,6 +30,7 @@ export default function App() {
                     )}
 
                 <Routes>
+                    <Route exact path="/test" element={<Login />} />
                     <Route exact path="/" element={<HomePage />} />
                     <Route exact path="/UploadPage" element={<UploadPage />} />
                     <Route exact path="/login" element={<LogIn />} />
@@ -42,7 +44,7 @@ export default function App() {
                     />
                     <Route
                         exact
-                        path="/annotate/:docType"
+                        path="/annotate/:docId"
                         element={<AnnotationPage />}
                     />
                 </Routes>

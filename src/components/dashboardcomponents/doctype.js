@@ -2,6 +2,29 @@ import React from 'react'
 import TButton from '../tbutton'
 
 function DocType(props) {
+    const handleDocumentDelete = (event) => {
+        event.preventDefault()
+        console.log(
+            'Document Delete Request Sent for document id: ',
+            props['doc']['id']
+        )
+        props.setDocTypes((prevDocuments) =>
+            prevDocuments.filter((doc) => doc.id !== props['doc']['id'])
+        )
+        console.log('Document Deleted Successfully', props['doc']['id'])
+
+        // axios(`${BACKEND}/doc_type/delete/${props["doc"]["id"]}`, {
+        //     method: 'DELETE',
+        //     withCredentials: true,
+        // })
+        //     .then((res) => {
+        //         console.log(res)
+        //         props.setDocTypes(prevDocuments => prevDocuments.filter((doc)=>doc.id !== props['doc']['id']))
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
+    }
     return (
         <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
             <div class="flex">
@@ -44,6 +67,7 @@ function DocType(props) {
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                         aria-hidden="true"
+                        onClick={handleDocumentDelete}
                     >
                         <path d="M8 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"></path>
                         <path

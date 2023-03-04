@@ -17,13 +17,14 @@ function JsonPage(props) {
 
     useEffect(() => {
         console.log(docType)
-        axios(`http://localhost:5000/doc/${docType}`, {
+        axios(`http://localhost:5000/doc_type/${docType}`, {
             method: 'GET',
             withCredentials: false,
         })
-            .then((res) => {
-                console.log(res)
-                setFields(res.data.data.fields)
+            .then((response) => response.data)
+            .then((data) => {
+                console.log(data)
+                setFields(data.fields)
             })
             .catch((err) => {
                 console.log(err)
@@ -48,7 +49,7 @@ function JsonPage(props) {
         console.log(fields)
         let formdata = new FormData()
         formdata.append('fields', JSON.stringify(fields))
-        axios(`http://localhost:5000/doc/${docType}`, {
+        axios(`http://localhost:5000/doc_type/${docType}`, {
             method: 'POST',
             withCredentials: false,
             data: formdata,
@@ -70,7 +71,7 @@ function JsonPage(props) {
         }
 
         axios(
-            `http://localhost:5000/doc/${docType}/field/${fields[index]['id']}`,
+            `http://localhost:5000/doc_type/${docType}/${fields[index]['id']}`,
             {
                 method: 'Delete',
                 withCredentials: false,

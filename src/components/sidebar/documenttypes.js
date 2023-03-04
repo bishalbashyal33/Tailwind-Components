@@ -1,29 +1,46 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import DocType from '../dashboardcomponents/doctype'
+import BASE_URL from '../../backend'
 
 function DocumentTypes(props) {
-    const [docTypes, setDocTypes] = useState([])
     const [file, setFile] = useState(null)
     const [documentName, setDocumentName] = useState('')
+    const [docTypes, setDocTypes] = useState([])
     const [modelType, setModelType] = useState('')
 
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0])
+    }
+
     useEffect(() => {
-        axios('http://localhost:5000/', {
+        console.log('inside axios')
+        // Get all the document types
+        axios(`${BASE_URL}/doc_type/get_all/`, {
             method: 'GET',
-            withCredentials: false,
+            withCredentials: true,
         })
             .then((res) => {
                 console.log(res)
-                setDocTypes(res.data.data)
+                setDocTypes(res.data)
             })
             .catch((err) => {
                 console.log(err)
             })
     }, [])
 
-    const handleFileChange = (event) => {
-        setFile(event.target.files[0])
+    const handleDocumentDelete = (id) => {
+        axios
+            .delete(`${BASE_URL}/doc_type/delete/${id}/`, {
+                withCredentials: true,
+            })
+            .then((res) => {
+                console.log(res)
+                setDocTypes(docTypes.filter((docType) => docType.id !== id))
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     const createNewDocumentType = (event) => {
@@ -32,18 +49,27 @@ function DocumentTypes(props) {
         formData.append('task_type', modelType)
         formData.append('file', file)
         formData.append('model', 'Token Classification')
-        console.log(formData)
-        axios({
-            method: 'post',
-            url: 'http://localhost:5000/add',
-            data: formData,
-            withCredentials: false,
-            headers: { 'Content-Type': 'multipart/form-data' },
-        })
-            .then(function (response) {
+        console.log(documentName, modelType, file, 'Token Classification')
+        axios
+            .post(
+                `${BASE_URL}/doc_type/post/`,
+                {
+                    name: documentName,
+                    task_type: modelType,
+                    model: 'Token Classification',
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
+            .then((response) => response.data)
+            .then((data) => {
                 //handle success
-                console.log(response)
-                setDocTypes([...docTypes, response.data.data])
+                console.log('Request successful', data)
+                setDocTypes([...docTypes, data])
             })
             .catch(function (response) {
                 //handle error
@@ -60,7 +86,12 @@ function DocumentTypes(props) {
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                 {docTypes &&
                     docTypes.map((doc, index) => (
-                        <DocType doc={doc} key={index} id={doc['id']} />
+                        <DocType
+                            doc={doc}
+                            key={index}
+                            id={doc['id']}
+                            setDocTypes={setDocTypes}
+                        />
                     ))}
 
                 {/* This components includes a form for adding a new document type */}
