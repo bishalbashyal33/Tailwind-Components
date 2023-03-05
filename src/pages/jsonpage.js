@@ -4,12 +4,15 @@ import JsonSpanElement from '../components/jsonspanelement'
 import TButton from '../components/tbutton'
 import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
+import BASE_URL from '../backend'
 
 function JsonPage(props) {
     const [zoom, setZoom] = useState(100)
     const imageWidth = `${zoom}%`
     const { docType } = useParams()
     const [fields, setFields] = useState([])
+    const [docMeta, setDocMeta] = useState({})
+    const [fileId, setFileId] = useState(null)
 
     const handleZoomChange = (event) => {
         setZoom(event.target.value)
@@ -17,14 +20,16 @@ function JsonPage(props) {
 
     useEffect(() => {
         console.log(docType)
-        axios(`http://localhost:5000/doc_type/${docType}`, {
+        axios(`${BASE_URL}/doc_type/new/${docType}`, {
             method: 'GET',
-            withCredentials: false,
+            withCredentials: true,
         })
             .then((response) => response.data)
             .then((data) => {
                 console.log(data)
-                setFields(data.fields)
+                setDocMeta(data['meta'])
+                setFields(data['meta']['fields'])
+                setFileId(data['file_id'])
             })
             .catch((err) => {
                 console.log(err)
@@ -38,7 +43,6 @@ function JsonPage(props) {
 
     const addNewField = (event) => {
         fields.push({
-            id: 1,
             name: `New Field ${fields.length + 1}`,
             type: 'string',
         })
@@ -47,44 +51,37 @@ function JsonPage(props) {
 
     const saveFieldData = (event) => {
         console.log(fields)
-        let formdata = new FormData()
-        formdata.append('fields', JSON.stringify(fields))
-        axios(`http://localhost:5000/doc_type/${docType}`, {
-            method: 'POST',
-            withCredentials: false,
-            data: formdata,
-        })
-            .then((res) => {
-                console.log(res)
+        docMeta.fields = fields
+        console.log('docMeta', docMeta)
+        docMeta['task_type'] = 'Token Classification'
+        docMeta['model'] = 'ML'
+        axios
+            .post(
+                `${BASE_URL}/doc_type/update/${docType}`,
+                docMeta,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
+            .then((response) => response.data)
+            .then((data) => {
+                //handle success
+                console.log(data)
+                setDocMeta(data)
+                setFields(data['fields'])
             })
-            .catch((err) => {
-                console.log(err)
+            .catch(function (response) {
+                //handle error
+                console.log(response)
             })
     }
 
     const handleFieldDelete = (event, index) => {
-        console.log(fields)
-        if (!fields[index].hasOwnProperty('id')) {
-            fields.splice(index, 1)
-            setFields([...fields])
-            return
-        }
-
-        axios(
-            `http://localhost:5000/doc_type/${docType}/${fields[index]['id']}`,
-            {
-                method: 'Delete',
-                withCredentials: false,
-            }
-        )
-            .then((res) => {
-                console.log(res)
-                fields.splice(index, 1)
-                setFields([...fields])
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        fields.splice(index, 1)
+        setFields([...fields])
     }
 
     return (
@@ -172,17 +169,19 @@ function JsonPage(props) {
 
                 <div class="flex-1  flex flex-col h-screen justify-center ml-32 overflow-clip">
                     <div class=" h-890 overflow-x-scroll scrollbar-hide ">
-                        <img
-                            src={'http://localhost:5000/image/1'}
-                            alt="Document Image"
-                            id="document-image"
-                            class="h-890 mx-auto  object-contain"
-                            style={{
-                                width: imageWidth,
-                                maxWidth: 'none',
-                                maxHeight: '890',
-                            }}
-                        />
+                        {fileId && (
+                            <img
+                                src={`${BASE_URL}/annotation/get_file/${fileId}`}
+                                alt="Document Image"
+                                id="document-image"
+                                class="h-890 mx-auto  object-contain"
+                                style={{
+                                    width: imageWidth,
+                                    maxWidth: 'none',
+                                    maxHeight: '890',
+                                }}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

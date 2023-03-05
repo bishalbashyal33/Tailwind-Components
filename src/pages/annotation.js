@@ -25,6 +25,7 @@ function AnnotationPage(props) {
     const [rect, setRect] = useState({})
     const [currentDocumentIndex, setCurrentDocumentIndex] = useState(null)
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+    const [annotationStatus, setAnnotationStatus] = useState(null)
 
     const [startX, setStartX] = useState(0)
     const [startY, setStartY] = useState(0)
@@ -65,6 +66,7 @@ function AnnotationPage(props) {
                 console.log(res)
                 setMetadata(res.data.metadata)
                 setRect(res.data.annotation.map((field) => []))
+                setAnnotationStatus(res.data.metadata.status === 'Processed.')
 
                 // reads and saves the information of the field
                 setFields(
@@ -121,6 +123,7 @@ function AnnotationPage(props) {
     }
 
     const handleBboxClick = (event, bbox, index) => {
+        if (annotationStatus) return
         if (event.ctrlKey) {
             fields[currentField]['value'] =
                 fields[currentField]['value'] + ' ' + bbox[4]
@@ -141,6 +144,7 @@ function AnnotationPage(props) {
         if (event.detail == 1) {
             console.log('Inside the click')
         } else if (event.detail == 2) {
+            if (annotationStatus) return
             setIsDrawing(true)
             const boundingRect = event.target.getBoundingClientRect()
             setStartX(
@@ -250,10 +254,26 @@ function AnnotationPage(props) {
             })
     }
 
+    const handleStatusChange = (e) => {
+        e.preventDefault()
+        metadata['status'] =
+            metadata['status'] === 'Processed.' ? 'reviewing' : 'Processed.'
+        setAnnotationStatus(metadata['status'] === 'Processed.')
+        setMetadata(metadata)
+    }
+
     return (
         <div class="mt-12 pb-24 dark:bg-gray-800">
             <div class="fixed z-20 bottom-0  left-0 pt-6 px-4 flex-shrink-0  w-550 mt-200 border border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <div>{metadata?.status}</div>
+                <div onClick={handleStatusChange}>
+                    {metadata &&
+                        (annotationStatus ? (
+                            <button>Start Reviewing</button>
+                        ) : (
+                            <button>Finish Annotation</button>
+                        ))}
+                </div>
                 <div class="flex flex-grow justify-start">
                     <a href={`${BASE_URL}/annotate/download/${docId}`} download>
                         <TButton label="Download Annotation"></TButton>
@@ -343,13 +363,29 @@ function AnnotationPage(props) {
                             <div key={index}>
                                 <span label="label">{field['name']}</span>
 
-                                <input
-                                    onClick={(event) => handleRef(event, index)}
-                                    type={'text'}
-                                    name="value"
-                                    value={field['value']}
-                                    className="value"
-                                />
+                                {metadata['status'] === 'Processed.' && (
+                                    <input
+                                        onClick={(event) =>
+                                            handleRef(event, index)
+                                        }
+                                        type={'text'}
+                                        name="value"
+                                        value={field['value']}
+                                        className="value"
+                                        readOnly="readonly"
+                                    />
+                                )}
+                                {metadata['status'] === 'reviewing' && (
+                                    <input
+                                        onClick={(event) =>
+                                            handleRef(event, index)
+                                        }
+                                        type={'text'}
+                                        name="value"
+                                        value={field['value']}
+                                        className="value"
+                                    />
+                                )}
                             </div>
                         ))}
                 </div>

@@ -1,5 +1,7 @@
 import React from 'react'
 import TButton from '../tbutton'
+import BASE_URL from '../../backend'
+import axios from 'axios'
 
 function DocType(props) {
     const handleDocumentDelete = (event) => {
@@ -13,17 +15,16 @@ function DocType(props) {
         )
         console.log('Document Deleted Successfully', props['doc']['id'])
 
-        // axios(`${BACKEND}/doc_type/delete/${props["doc"]["id"]}`, {
-        //     method: 'DELETE',
-        //     withCredentials: true,
-        // })
-        //     .then((res) => {
-        //         console.log(res)
-        //         props.setDocTypes(prevDocuments => prevDocuments.filter((doc)=>doc.id !== props['doc']['id']))
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //     })
+        axios
+            .post(`${BASE_URL}/annotation/delete/${props['doc']['id']}`, {
+                withCredentials: true,
+            })
+            .then((res) => {
+                console.log('Successfully deleted ', res.data.success)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
     return (
         <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
