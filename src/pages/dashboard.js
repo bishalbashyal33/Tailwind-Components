@@ -12,11 +12,16 @@ import APIService from '../components/sidebar/apiservices'
 import ModelTraining from '../components/sidebar/modeltraining'
 import Settings from '../components/sidebar/settings'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../reducers/loginReducer'
 import BASE_URL from '../backend'
 
 function DashBoard(props) {
+    console.log('Inside dashboard')
+    const { user_id, session_id } = useSelector((state) => state.auth)
     const [activeTab, setActiveTab] = useState('DocumentType')
-    let navigate = useNavigate()
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [docTypes, setDocTypes] = useState([])
     const [selectedDocType, setSelectedDocType] = useState(null)
 
@@ -65,7 +70,7 @@ function DashBoard(props) {
 
     const handleSignout = async (e) => {
         console.log('sign out')
-        await axios.post(`${BASE_URL}/user/logout`)
+        dispatch(logout())
         navigate('/')
     }
 

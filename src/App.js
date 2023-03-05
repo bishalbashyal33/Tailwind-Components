@@ -18,8 +18,13 @@ import AboutPage from './pages/about'
 import JsonPage from './pages/jsonpage'
 import AnnotationPage from './pages/annotation'
 import Login from './test'
+import { useDispatch, useSelector } from 'react-redux'
+import { userLogin } from './actions/loginAction'
+import Protected from './components/ProtectedRoute'
 
 export default function App() {
+    const { user_id, session_id, error } = useSelector((state) => state.auth)
+
     return (
         <>
             <Router>
@@ -35,17 +40,33 @@ export default function App() {
                     <Route exact path="/UploadPage" element={<UploadPage />} />
                     <Route exact path="/login" element={<LogIn />} />
                     <Route exact path="/signup" element={<SignUp />} />
-                    <Route exact path="/dashboard" element={<DashBoard />} />
+                    <Route
+                        exact
+                        path="/dashboard"
+                        element={
+                            <Protected>
+                                <DashBoard />
+                            </Protected>
+                        }
+                    />
                     <Route exact path="/about" element={<AboutPage />} />
                     <Route
                         exact
                         path="/jsonpage/:docType"
-                        element={<JsonPage />}
+                        element={
+                            <Protected>
+                                <JsonPage />
+                            </Protected>
+                        }
                     />
                     <Route
                         exact
                         path="/annotate/:docId"
-                        element={<AnnotationPage />}
+                        element={
+                            <Protected>
+                                <AnnotationPage />
+                            </Protected>
+                        }
                     />
                 </Routes>
 

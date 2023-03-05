@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import axios from 'axios'
 import HeroSection from '../components/herosection'
-import BACKEND from '../backend'
+import BASE_URL from '../backend'
+import { useDispatch, useSelector } from 'react-redux'
+import { userLogin } from '../actions/loginAction'
+
 export const noteApi = axios.create({
-    baseURL: BACKEND,
+    baseURL: BASE_URL,
     withCredentials: true,
 })
 
@@ -14,6 +17,8 @@ function LogIn(props) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
+    const { session_id, loading, error } = useSelector((state) => state.auth)
+    const dispatch = useDispatch()
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value)
@@ -31,37 +36,44 @@ function LogIn(props) {
             password: password,
         }
 
-        axios
-            .post(
-                `${BACKEND}/user/signin`,
-                {
-                    email: email,
-                    password: password,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            .then((response) => response.data)
+        console.log()
+        dispatch(userLogin(userCredentials))
             .then((res) => {
-                console.log(res)
-                if (res.msg === 'login successful') {
-                    console.log('Before the navigation')
-                    navigate('/dashboard')
-                }
+                navigate('/dashboard')
             })
-            .catch((error) => {
-                console.log(error.response)
+            .catch((err) => {
+                navigate('/login')
             })
+        console.log('after login')
+        // return <Navigate to="/dashboard" />
+        console.log(loading)
+        console.log('after navigation to dashboard')
 
-        // const response = await noteApi.post('user/signin', userCredentials)
+        // axios
+        //     .post(
+        //         `${BASE_URL}/user/signin`,
+        //         {
+        //             email: email,
+        //             password: password,
+        //         },
+        //         {
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //         }
+        //     )
+        //     .then((response) => response.data)
+        //     .then((res) => {
+        //         console.log(res)
 
-        // Check if the login was successful
-        // if (response.data.msg === 'login successful') {
-        //     NavigateToUploadPage()
-        // }
+        //         if (res.msg === 'login successful') {
+        //             console.log('Before the navigation')
+        //             // navigate('/dashboard')
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log(error.response)
+        //     })
     }
 
     return (
