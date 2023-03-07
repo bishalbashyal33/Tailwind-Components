@@ -16,7 +16,7 @@ function DocType(props) {
         console.log('Document Deleted Successfully', props['doc']['id'])
 
         axios
-            .post(`${BASE_URL}/annotation/delete/${props['doc']['id']}`, {
+            .post(`${BASE_URL}/doc_type/delete/${props['doc']['id']}`, {
                 withCredentials: true,
             })
             .then((res) => {

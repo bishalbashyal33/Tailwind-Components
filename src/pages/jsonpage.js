@@ -26,7 +26,7 @@ function JsonPage(props) {
         })
             .then((response) => response.data)
             .then((data) => {
-                console.log(data)
+                console.log('Response data: ', data)
                 setDocMeta(data['meta'])
                 setFields(data['meta']['fields'])
                 setFileId(data['file_id'])
@@ -50,11 +50,11 @@ function JsonPage(props) {
     }
 
     const saveFieldData = (event) => {
-        console.log(fields)
+        console.log('fields: ', fields)
         docMeta.fields = fields
-        console.log('docMeta', docMeta)
         docMeta['task_type'] = 'Token Classification'
         docMeta['model'] = 'ML'
+        console.log('docMeta', docMeta)
         axios
             .post(
                 `${BASE_URL}/doc_type/update/${docType}`,
@@ -70,8 +70,8 @@ function JsonPage(props) {
             .then((data) => {
                 //handle success
                 console.log(data)
-                setDocMeta(data)
-                setFields(data['fields'])
+                setDocMeta(data.data)
+                setFields(data.data['fields'])
             })
             .catch(function (response) {
                 //handle error
@@ -88,13 +88,13 @@ function JsonPage(props) {
         <div class="mt-12 pb-24 dark:bg-gray-800">
             <div class="fixed bottom-0  left-0 pt-6 px-4 flex-shrink-0  w-600 mt-200 border border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <div class="flex flex-grow justify-start">
-                    <TButton label="+ Add Section"></TButton>
+                    {/* <TButton label="+ Add Section"></TButton> */}
                     <TButton
                         onClick={saveFieldData}
                         label="Save & Close"
                     ></TButton>
                 </div>
-                <div class="flex justify-between">
+                {/* <div class="flex justify-between">
                     <svg
                         class="ml-2 -mr-1 w-5 h-5 "
                         fill="White"
@@ -123,7 +123,7 @@ function JsonPage(props) {
                             d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
                         ></path>
                     </svg>
-                </div>
+                </div> */}
             </div>
 
             <div class="p-6 w-auto fixed top-0 right-0  border border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -143,7 +143,7 @@ function JsonPage(props) {
                     {fields &&
                         fields.map((field, index) => (
                             <div key={index}>
-                                <input
+                                {/* <input
                                     onChange={(event) =>
                                         handleFieldNameChange(event, index)
                                     }
@@ -151,14 +151,22 @@ function JsonPage(props) {
                                     name="value"
                                     value={field['name']}
                                     className="value"
+                                /> */}
+                                <JsonSpanElement
+                                    index={index}
+                                    handleFieldNameChange={
+                                        handleFieldNameChange
+                                    }
+                                    handleFieldDelete={handleFieldDelete}
+                                    value={field['name']}
                                 />
-                                <button
+                                {/* <button
                                     onClick={(event) =>
                                         handleFieldDelete(event, index)
                                     }
                                 >
                                     Delete
-                                </button>
+                                </button> */}
                             </div>
                         ))}
                     <TButton

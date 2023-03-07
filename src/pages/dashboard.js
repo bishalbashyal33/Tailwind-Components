@@ -52,15 +52,15 @@ function DashBoard(props) {
 
     const renderPageContent = () => {
         switch (activeTab) {
-            case 'MyDocuments':
-                return <MyDocuments />
             case 'DocumentType':
                 return <DocumentTypes />
-            case 'API&Services':
-                return <APIService />
+            case 'MyDocuments':
+                return <MyDocuments />
             // add cases for other tabs
             case 'Model&Training':
                 return <ModelTraining />
+            case 'API&Services':
+                return <APIService />
             case 'Settings':
                 return <Settings />
             default:
@@ -181,15 +181,6 @@ function DashBoard(props) {
                                             >
                                                 Documents
                                             </a>
-                                        </li>
-                                        <li>
-                                            <div
-                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
-                                                role="menuitem"
-                                                onClick={handleSignout}
-                                            >
-                                                Sign out
-                                            </div>
                                         </li>
                                     </ul>
                                 </div>

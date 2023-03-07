@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import JsonHeadElement from '../components/jsonheadelement'
 import JsonSpanElement from '../components/jsonspanelement'
 import TButton from '../components/tbutton'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
 import BASE_URL from '../backend'
@@ -13,7 +13,7 @@ function AnnotationPage(props) {
     const { docId } = useParams()
     const location = useLocation()
     const documentList = location.state.documents
-    console.log(documentList)
+    console.log(`${BASE_URL}/annotation/get_file/${docId}`)
 
     const [actualBboxes, setactualBboxes] = useState([])
     const [metadata, setMetadata] = useState({})
@@ -36,6 +36,7 @@ function AnnotationPage(props) {
     const [zoom, setZoom] = useState(100)
 
     const imageRef = useRef(null)
+    const navigate = useNavigate()
 
     const handleZoomChange = (event) => {
         setZoom(event.target.value)
@@ -127,11 +128,11 @@ function AnnotationPage(props) {
         if (event.ctrlKey) {
             fields[currentField]['value'] =
                 fields[currentField]['value'] + ' ' + bbox[4]
-            fields[currentField]['indexes'].push(index)
+            fields[currentField]['word_ids'].push(bbox[5])
             setFields([...fields])
         } else {
             fields[currentField]['value'] = bbox[4]
-            fields[currentField]['word_ids'] = [index]
+            fields[currentField]['word_ids'] = [bbox[5]]
             setFields([...fields])
         }
     }
@@ -248,6 +249,7 @@ function AnnotationPage(props) {
             )
             .then((res) => {
                 console.log('Successfully annotated ', res)
+                navigate(-1)
             })
             .catch((err) => {
                 console.log(err)
@@ -265,22 +267,29 @@ function AnnotationPage(props) {
     return (
         <div class="mt-12 pb-24 dark:bg-gray-800">
             <div class="fixed z-20 bottom-0  left-0 pt-6 px-4 flex-shrink-0  w-550 mt-200 border border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <div>{metadata?.status}</div>
-                <div onClick={handleStatusChange}>
-                    {metadata &&
-                        (annotationStatus ? (
-                            <button>Start Reviewing</button>
-                        ) : (
-                            <button>Finish Annotation</button>
-                        ))}
-                </div>
                 <div class="flex flex-grow justify-start">
                     <a href={`${BASE_URL}/annotate/download/${docId}`} download>
-                        <TButton label="Download Annotation"></TButton>
+                        <TButton label="Download"></TButton>
                     </a>
+                    <div>
+                        <TButton
+                            onClick={handleStatusChange}
+                            label={
+                                annotationStatus
+                                    ? 'Start Reviewing'
+                                    : 'Finish Annotation'
+                            }
+                        ></TButton>
+
+                        {/* {metadata &&
+                        (annotationStatus ? (
+                        ) : (
+                            <TButton>Finish Annotation</TButton>
+                        ))} */}
+                    </div>
                     <TButton
                         onClick={handleAnnotationSave}
-                        label="Save & Close"
+                        label="Save and exit"
                     ></TButton>
                 </div>
                 <div class="flex justify-between">
@@ -361,9 +370,9 @@ function AnnotationPage(props) {
                     {fields &&
                         fields.map((field, index) => (
                             <div key={index}>
-                                <span label="label">{field['name']}</span>
+                                {/* <span label="label">{field['name']}</span> */}
 
-                                {metadata['status'] === 'Processed.' && (
+                                {/* {metadata['status'] === 'Processed.' && (
                                     <input
                                         onClick={(event) =>
                                             handleRef(event, index)
@@ -374,8 +383,8 @@ function AnnotationPage(props) {
                                         className="value"
                                         readOnly="readonly"
                                     />
-                                )}
-                                {metadata['status'] === 'reviewing' && (
+                                )} */}
+                                {/* {metadata['status'] === 'reviewing' && (
                                     <input
                                         onClick={(event) =>
                                             handleRef(event, index)
@@ -385,7 +394,23 @@ function AnnotationPage(props) {
                                         value={field['value']}
                                         className="value"
                                     />
-                                )}
+                                )} */}
+                                {/* <input
+                                    onClick={(event) => handleRef(event, index)}
+                                    type={'text'}
+                                    name="value"
+                                    value={field['value']}
+                                    className="value"
+                                    readOnly={
+                                        metadata['status'] === 'Processed.'
+                                    }
+                                /> */}
+                                <JsonSpanElement
+                                    index={index}
+                                    label={field['name']}
+                                    handleRef={handleRef}
+                                    value={field['value']}
+                                />
                             </div>
                         ))}
                 </div>

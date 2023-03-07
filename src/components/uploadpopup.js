@@ -23,7 +23,7 @@ function UPopup(props) {
             })
 
             // Load the selected file
-            reader.readAsDataURL(file)
+            reader.readAsDataURL(temp_file)
         })
 
         // Trigger a click event on the file input element
