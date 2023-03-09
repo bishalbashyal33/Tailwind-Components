@@ -36,6 +36,7 @@ function AnnotationPage(props) {
     const [zoom, setZoom] = useState(100)
 
     const imageRef = useRef(null)
+    const imgContainerRef = useRef(null)
     const navigate = useNavigate()
 
     const handleZoomChange = (event) => {
@@ -49,16 +50,6 @@ function AnnotationPage(props) {
             else return 0
         })
         const y = documentList.findIndex((doc) => doc.image_id == docId) || 0
-        console.log(
-            'new indexes',
-            Math.max(y - 1, 0),
-            Math.min(y + 1, documentList.length - 1)
-        )
-        console.log(
-            'documentList: ',
-            documentList[Math.min(y + 1, documentList.length - 1)],
-            documentList[Math.max(y - 1, 0)]
-        )
         axios(`${BASE_URL}/annotate/get/${docId}`, {
             method: 'GET',
             withCredentials: true,
@@ -68,7 +59,8 @@ function AnnotationPage(props) {
                 setMetadata(res.data.metadata)
                 setRect(res.data.annotation.map((field) => []))
                 setAnnotationStatus(res.data.metadata.status === 'Processed.')
-
+                setWidth(res.data.metadata.width)
+                setHeight(res.data.metadata.height)
                 // reads and saves the information of the field
                 setFields(
                     res.data.annotation.map((field) => ({
@@ -81,11 +73,9 @@ function AnnotationPage(props) {
                 setactualBboxes(res.data.ocr_data)
                 calculateBboxDimensions(
                     res.data.ocr_data,
-                    774 || res.data.height,
-                    1492 || res.data.width
+                    res.data.metadata.height,
+                    res.data.metadata.width
                 )
-                setHeight(774 || res.data.height)
-                setWidth(1492 || res.data.width)
             })
             .catch((err) => {
                 console.log(err)
@@ -102,11 +92,16 @@ function AnnotationPage(props) {
     ) => {
         const widthratio = imageRef.current.width / _width
         const heightratio = imageRef.current.height / _height
+        console.log(
+            'Image offsets',
+            imageRef.current.offsetTop,
+            imageRef.current.height
+        )
         setBboxes(
             bboxData
                 .map((bbox, index) => [
-                    bbox[0] * heightratio + imageRef.current.offsetLeft,
-                    bbox[1] * widthratio +
+                    bbox[0] * widthratio + imageRef.current.offsetLeft,
+                    bbox[1] * heightratio +
                         imageRef.current.offsetTop -
                         scrollTop,
                     bbox[2] * widthratio,
@@ -116,8 +111,10 @@ function AnnotationPage(props) {
                 ])
                 .filter((bbox, index) => {
                     return (
-                        bbox[1] >= imageRef.current.offsetTop &&
-                        bbox[1] + bbox[2] <= imageRef.current.height
+                        bbox[1] >= imgContainerRef.current.offsetTop &&
+                        bbox[1] + bbox[3] <=
+                            imgContainerRef.current.clientHeight +
+                                imgContainerRef.current.offsetTop
                     )
                 })
         )
@@ -233,13 +230,12 @@ function AnnotationPage(props) {
 
     const handleAnnotationSave = (event) => {
         console.log('Annotation Save Requested')
-        console.log(fields)
-        let formdata = new FormData()
-        formdata.append('fields', JSON.stringify(fields))
+        console.log('annotations', fields)
+        console.log('request data', { annotations: fields, metadata: metadata })
         axios
             .post(
                 `${BASE_URL}/annotate/${docId}`,
-                { annotation: fields },
+                { annotations: { annotation: fields }, metadata: metadata },
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -249,7 +245,19 @@ function AnnotationPage(props) {
             )
             .then((res) => {
                 console.log('Successfully annotated ', res)
-                navigate(-1)
+                navigate(
+                    `/annotate/${
+                        documentList[
+                            Math.min(
+                                currentDocumentIndex + 1,
+                                documentList.length - 1
+                            )
+                        ]['image_id']
+                    }`,
+                    {
+                        state: { documents: documentList },
+                    }
+                )
             })
             .catch((err) => {
                 console.log(err)
@@ -418,8 +426,9 @@ function AnnotationPage(props) {
                 {/* This component contains all the features for annotation */}
                 <div class="flex-1  flex flex-col h-screen justify-center ml-8 overflow-clip">
                     <div
-                        class="h-890 overflow-x-scroll scrollbar-hide"
+                        class="h-890 overflow-x-scroll scrollbar-hide img-container"
                         onScroll={handleScrollEvent}
+                        ref={imgContainerRef}
                     >
                         <img
                             ref={imageRef}
