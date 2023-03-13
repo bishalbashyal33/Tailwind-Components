@@ -11,6 +11,7 @@ import DocumentTypes from "../components/sidebar/documenttypes";
 import APIService from "../components/sidebar/apiservices";
 import ModelTraining from "../components/sidebar/modeltraining";
 import Settings from "../components/sidebar/settings";
+import SettingPopup from "../components/settingpopup";
 
 function DashBoard(props) {
   const [activeTab, setActiveTab] = useState("DocumentType");
@@ -46,8 +47,7 @@ function DashBoard(props) {
   return (
     <div class="container h-screen">
       <UPopup />
-
-
+      <SettingPopup/>
 
       <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="px-3 py-3 lg:px-5 lg:pl-3">

@@ -40,6 +40,9 @@ function ModelTraining(props) {
             </div>
            
             <TButton label = "Delete"/>
+            
+            <TButton label = "Train New Model"/>
+
           
           </div>
           <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -81,6 +84,8 @@ function ModelTraining(props) {
              <Th docname="HuggingFace" docuploadedby="GPT" doctype="91%" docstatus="0.2" docaction="0.75"/>
              <Th docname="HuggingFace" docuploadedby="GPT" doctype="91%" docstatus="0.2" docaction="0.75"/>
              <Th docname="HuggingFace" docuploadedby="GPT" doctype="91%" docstatus="0.2" docaction="0.75"/>
+             <Th docname="HuggingFace" docuploadedby="GPT" doctype="91%" docstatus="0.2" docaction="0.75"/>
+             
              
              
             </tbody>

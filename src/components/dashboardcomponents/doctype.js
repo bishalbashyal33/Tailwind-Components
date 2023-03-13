@@ -8,71 +8,73 @@ function DocType(props) {
       class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
     >
       <div class="flex">
-      <div class="flex justify-start">
-        <span class="mb-2  dark:text-white">Invoice</span>
-        <svg
-          class="ml-2 -mr-1 w-5 h-5 "
-          fill="currentColor"
-          stroke="White"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z"></path>
-        </svg>
-        </div>
-
-        <div class="flex flex-grow justify-end">
-          
+        <div class="flex justify-start">
+          <span class="mb-2  dark:text-white">Invoice</span>
           <svg
             class="ml-2 -mr-1 w-5 h-5 "
-            fill="none"
-            stroke="White"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
-            ></path>
-          </svg>
-          <svg
-            class="ml-2 -mr-1 w-5 h-5"
             fill="currentColor"
             stroke="White"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
           >
-            <path d="M8 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"></path>
+            <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z"></path>
+          </svg>
+        </div>
+
+        <div class="flex flex-grow justify-end">
+          <svg
+            class="ml-2 -mr-1 w-5 h-5 hover:fill-white hover:stroke-gray-800"
+            data-modal-target="settingModal" data-modal-toggle="settingModal"
+            fill="transparent"
+            stroke="White"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
             <path
               clip-rule="evenodd"
               fill-rule="evenodd"
-              d="M4.5 2A1.5 1.5 0 003 3.5v13A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V7.621a1.5 1.5 0 00-.44-1.06l-4.12-4.122A1.5 1.5 0 0011.378 2H4.5zm5 5a3 3 0 101.524 5.585l1.196 1.195a.75.75 0 101.06-1.06l-1.195-1.196A3 3 0 009.5 7z"
+              d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 011.262.125l.962.962a1 1 0 01.125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 01.804.98v1.361a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.587 1.416l.834 1.25a1 1 0 01-.125 1.262l-.962.962a1 1 0 01-1.262.125l-1.25-.834a6.953 6.953 0 01-1.416.587l-.294 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.416-.587l-1.25.834a1 1 0 01-1.262-.125l-.962-.962a1 1 0 01-.125-1.262l.834-1.25a6.957 6.957 0 01-.587-1.416l-1.473-.294A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 01.125-1.262l.962-.962A1 1 0 015.38 3.03l1.25.834a6.957 6.957 0 011.416-.587l.294-1.473zM13 10a3 3 0 11-6 0 3 3 0 016 0z"
             ></path>
           </svg>
-          
+          <svg
+           class="ml-2 -mr-1 w-5 h-5 hover:fill-white hover:stroke-gray-800"
+         
+            fill="transparent"
+            stroke="White"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+            ></path>
+          </svg>
         </div>
       </div>
 
       <ul class="mb-2 tracking-tight text-gray-900 dark:text-gray-200">
-        <li>Uploaded:<strong>1</strong></li>
-        <li>Review Pending: <strong>1</strong></li>
-        <li>Approvaed: <strong>0</strong></li>
+        <li>
+          Uploaded:<strong>1</strong>
+        </li>
+        <li>
+          Review Pending: <strong>1</strong>
+        </li>
+        <li>
+          Approvaed: <strong>0</strong>
+        </li>
       </ul>
 
-
       <div class="flex justify-between">
-      <a href="/jsonpage">
-        <TButton label="Edit Fields"></TButton>
+        <a href="/jsonpage">
+          <TButton label="Edit Fields"></TButton>
         </a>
         <TButton label="Upload"></TButton>
         <TButton label="Review"></TButton>
       </div>
-     
     </a>
   );
 }
