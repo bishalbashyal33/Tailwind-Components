@@ -2,15 +2,15 @@ import React from "react";
 import SettingPopup from "../settingpopup";
 import TButton from "../tbutton";
 
-function DocType(props) {
+function FormType(props) {
   return (
     <a
       href="#"
-      class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+      class="block max-w-sm p-6 mt-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
     >
       <div class="flex">
         <div class="flex justify-start">
-          <span class="mb-2  dark:text-white">Invoice</span>
+          <span class="mb-2  dark:text-white">Form</span>
           <svg
             class="ml-2 -mr-1 w-5 h-5 "
             fill="currentColor"
@@ -59,25 +59,23 @@ function DocType(props) {
 
       <ul class="mb-2 tracking-tight text-gray-900 dark:text-gray-200">
         <li>
-          Uploaded:<strong>1</strong>
+          Name:<input type="float" id="form_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
         </li>
         <li>
-          Review Pending: <strong>1</strong>
+          Task Type: <input type="text" id="epoch_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
         </li>
-        <li>
-          Approvaed: <strong>0</strong>
-        </li>
+       
       </ul>
 
       <div class="flex justify-between">
         <a href="/jsonpage">
-          <TButton label="Edit Fields"></TButton>
+          <TButton label="Upload Image"></TButton>
         </a>
-        <TButton label="Upload"></TButton>
-        <TButton label="Review"></TButton>
+        <TButton label="Save"></TButton>
+        <TButton label="Cancel"></TButton>
       </div>
     </a>
   );
 }
 
-export default DocType;
+export default FormType;

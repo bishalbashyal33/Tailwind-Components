@@ -12,11 +12,13 @@ import APIService from "../components/sidebar/apiservices";
 import ModelTraining from "../components/sidebar/modeltraining";
 import Settings from "../components/sidebar/settings";
 import SettingPopup from "../components/settingpopup";
+import TrainPopup from "../components/trainpopup";
 
 function DashBoard(props) {
-  const [activeTab, setActiveTab] = useState("DocumentType");
+  const [activeTab, setActiveTab] = useState("Model&Training");
 
   const handleTabClick = (tab) => {
+    
     var prevTab = document.getElementById(activeTab);
     if (prevTab) prevTab.classList.remove("dark:bg-gray-700");
     setActiveTab(tab);
@@ -26,7 +28,13 @@ function DashBoard(props) {
     element.classList.add("dark:bg-gray-700");
   };
 
+
+
+
+
+
   const renderPageContent = () => {
+  
     switch (activeTab) {
       case "MyDocuments":
         return <MyDocuments />;
@@ -44,10 +52,19 @@ function DashBoard(props) {
     }
   };
 
+
+   
+  
+
   return (
+    <div>
+    
     <div class="container h-screen">
-      <UPopup />
-      <SettingPopup/>
+  
+    <div>
+      <UPopup/>
+      <TrainPopup/>
+      </div>
 
       <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="px-3 py-3 lg:px-5 lg:pl-3">
@@ -340,6 +357,7 @@ function DashBoard(props) {
       </aside>
 
       {renderPageContent()}
+    </div>
     </div>
   );
 }

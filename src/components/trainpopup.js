@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { saveAs } from "file-saver";
 import UDButton from "./udropdown";
 
-function SettingPopup(props) {
+function TrainPopup(props) {
   return (
     <div
-      id="settingModal"
+      id="trainModal"
       data-modal-backdrop="static"
-      tabindex="-1"
+      tabIndex="-1"
       aria-hidden="true"
       class="fixed top-24 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto  overflow md:inset-0 h-modal :h-full"
     >
@@ -15,12 +15,12 @@ function SettingPopup(props) {
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-              Settings
+              Train New Model
             </h3>
             <button
               type="button"
               class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-              data-modal-hide="settingModal"
+              data-modal-hide="trainModal"
             >
               <svg
                 class="w-5 h-5"
@@ -40,12 +40,12 @@ function SettingPopup(props) {
           <div class="p-6 flex justify-start">
             <div class="flex flex-col justify-center">
               <span class=" font-normal text-gray-900 dark:text-white">
-                Modal Path:
+                Document Type:
               </span>
             </div>
             <div class="ml-2 flex flex-1 justify-start">
               <UDButton
-                label="Select Path"
+                label="DropDown"
                 field1="Demo Path"
                 field2="Demo Path"
                 field3="Demo Path"
@@ -56,12 +56,20 @@ function SettingPopup(props) {
 
           <div class="pl-6 flex justify-start">
             <div class="flex flex-col justify-center">
-              <span class="  text-gray-900 dark:text-white">Modal Type:</span>
+              <span class=" w-32 text-gray-900 dark:text-white">No. Of Epoch:</span>
             </div>
             <div class="ml-2 flex flex-1 justify-start">
-              <span class=" font-semibold text-gray-900 dark:text-white">
-                Token Classification
-              </span>
+            <input type="int" id="epoch_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
+            </div>
+          </div>
+
+
+          <div class="pl-6 flex justify-start">
+            <div class="flex flex-col justify-center">
+              <span class=" w-32 text-gray-900 dark:text-white">Train Split:</span>
+            </div>
+            <div class="ml-2 flex flex-1 justify-start mt-2">
+            <input type="float" id="epoch_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
             </div>
           </div>
 
@@ -87,4 +95,4 @@ function SettingPopup(props) {
   );
 }
 
-export default SettingPopup;
+export default TrainPopup;

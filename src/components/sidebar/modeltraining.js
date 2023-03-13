@@ -2,12 +2,19 @@
 import React from 'react';
 import Th from './thcomponent';
 import TButton from '../tbutton';
+import TrainPopup from '../trainpopup';
 
 function ModelTraining(props) {
 
+
+ 
+
+
   return (
     <div class="p-4 sm:ml-64">
+   <TrainPopup/>
     <div class="p-4 border-2 text-white border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+      
       {
         <div class=" relative overflow-x-auto shadow-md sm:rounded-lg">
           <div class="flex pb-4 pt-4 pl-4 bg-white dark:bg-gray-900">
@@ -40,8 +47,11 @@ function ModelTraining(props) {
             </div>
            
             <TButton label = "Delete"/>
-            
-            <TButton label = "Train New Model"/>
+      
+            <TButton  label = "Train New Model" id="trainButton" target="trainModal" toggle="trainModal" />
+           
+          
+           
 
           
           </div>
