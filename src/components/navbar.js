@@ -1,11 +1,18 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { userLogin } from '../actions/loginAction'
+import { logout } from '../reducers/loginReducer'
 
-import MyButton from './button'
 function Navbar(props) {
+    const dispatch = useDispatch()
+
+    const navigate = useNavigate()
     const { user_id, session_id, error } = useSelector((state) => state.auth)
+    const handleSignout = async (e) => {
+        console.log('sign out')
+        dispatch(logout())
+        navigate('/')
+    }
 
     return (
         <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
@@ -21,7 +28,7 @@ function Navbar(props) {
                     </span>
                 </a>
                 <div class="flex md:order-2">
-                    {!user_id && !session_id && (
+                    {!user_id && !session_id ? (
                         <>
                             <Link to="/signup">
                                 <button
@@ -40,6 +47,16 @@ function Navbar(props) {
                                 </button>
                             </Link>
                         </>
+                    ) : (
+                        <div>
+                            <button
+                                onClick={handleSignout}
+                                type="button"
+                                class="mx-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            >
+                                Log Out
+                            </button>
+                        </div>
                     )}
 
                     <button
@@ -72,7 +89,7 @@ function Navbar(props) {
                     <ul class="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                         <li>
                             <a
-                                href="#"
+                                href="/"
                                 class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white"
                                 aria-current="page"
                             >

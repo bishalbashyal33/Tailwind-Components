@@ -1,55 +1,16 @@
-import React, { useState } from 'react'
-import TButton from '../tbutton'
-import BASE_URL from '../../backend'
+import React from 'react'
 import SettingPopup from '../settingpopup'
-import axios from 'axios'
-import SettingModal from '../SettingModal'
+import TButton from '../tbutton'
 
-function DocType(props) {
-    const [isOpen, setIsOpen] = useState(false)
-
-    const handleDocumentDelete = (event) => {
-        event.preventDefault()
-        console.log(
-            'Document Delete Request Sent for document id: ',
-            props['doc']['id']
-        )
-        props.setDocTypes((prevDocuments) =>
-            prevDocuments.filter((doc) => doc.id !== props['doc']['id'])
-        )
-        console.log('Document Deleted Successfully', props['doc']['id'])
-
-        axios
-            .post(`${BASE_URL}/doc_type/delete/${props['doc']['id']}`, {
-                withCredentials: true,
-            })
-            .then((res) => {
-                console.log('Successfully deleted ', res.data.success)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
-    const handleClick = (event) => {
-        window.location.href = `annotate/${props['doc']['id']}`
-    }
-
-    function handleOpenModal() {
-        setIsOpen(true)
-    }
-
-    function handleCloseModal() {
-        setIsOpen(false)
-    }
+function FormType(props) {
     return (
-        <div class="m-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-            <SettingModal isOpen={isOpen} onCloseModal={handleCloseModal} />
-
+        <a
+            href="#"
+            class="block max-w-sm p-6 m-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+        >
             <div class="flex">
                 <div class="flex justify-start">
-                    <span class="mb-2  dark:text-white">
-                        {props['doc']['name']}
-                    </span>
+                    <span class="mb-2  dark:text-white">Form</span>
                     <svg
                         class="ml-2 -mr-1 w-5 h-5 "
                         fill="currentColor"
@@ -72,7 +33,6 @@ function DocType(props) {
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                         aria-hidden="true"
-                        onClick={handleOpenModal}
                     >
                         <path
                             clip-rule="evenodd"
@@ -81,13 +41,12 @@ function DocType(props) {
                         ></path>
                     </svg>
                     <svg
-                        class="ml-2 -mr-1 w-5 h-5"
-                        fill="currentColor"
+                        class="ml-2 -mr-1 w-5 h-5 hover:fill-white hover:stroke-gray-800"
+                        fill="transparent"
                         stroke="White"
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                         aria-hidden="true"
-                        onClick={handleDocumentDelete}
                     >
                         <path
                             clip-rule="evenodd"
@@ -100,26 +59,36 @@ function DocType(props) {
 
             <ul class="mb-2 tracking-tight text-gray-900 dark:text-gray-200">
                 <li>
-                    Uploaded:<strong>1</strong>
+                    Name:
+                    <input
+                        type="float"
+                        id="form_name"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="John"
+                        required
+                    />
                 </li>
                 <li>
-                    Review Pending: <strong>1</strong>
-                </li>
-                <li>
-                    Approved: <strong>0</strong>
+                    Task Type:{' '}
+                    <input
+                        type="text"
+                        id="epoch_number"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="John"
+                        required
+                    />
                 </li>
             </ul>
+
             <div class="flex justify-between">
-                <a href={`jsonpage/${props['doc']['id']}`}>
-                    <TButton label="Edit Fields"></TButton>
+                <a href="/jsonpage">
+                    <TButton label="Upload Image"></TButton>
                 </a>
-                <TButton label="Upload"></TButton>
-                {/* <a href={`annotate/${props['doc']['id']}`}> */}
-                <TButton onClick={handleClick} label="Review"></TButton>
-                {/* </a> */}
+                <TButton label="Save"></TButton>
+                <TButton label="Cancel"></TButton>
             </div>
-        </div>
+        </a>
     )
 }
 
-export default DocType
+export default FormType

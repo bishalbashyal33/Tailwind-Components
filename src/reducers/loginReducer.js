@@ -35,24 +35,31 @@ const userAuth = createSlice({
             state.error = null
             state.email = ''
             state.username = ''
-            return state
         },
     },
     extraReducers: {
         [userLogin.pending]: (state) => {
+            console.log('state: ', state)
             console.log('loginRequest dispatched 4')
-            console.log(current(state))
+            console.log("loginRequest's state: ", current(state))
             state.loading = true
             state.error = null
+            console.log('state: ', state)
+
+            return state
         },
         [userLogin.fulfilled]: (state, { payload }) => {
+            console.log('state: ', state)
+
             state.loading = false
             state.user_id = payload.user_id
             state.session_id = payload.session_id
         },
         [userLogin.rejected]: (state, { payload }) => {
+            console.log('state: ', state)
             state.loading = false
             state.error = payload
+            console.log('state: ', state)
         },
     },
 })

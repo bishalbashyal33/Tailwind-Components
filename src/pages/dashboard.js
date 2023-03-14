@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MyButton from '../components/button'
-import DocType from '../components/dashboardcomponents/doctype'
-import HeroSection from '../components/herosection'
 import TButton from '../components/tbutton'
 import DDButton from '../components/dashboardcomponents/dropdownbutton'
 import UPopup from '../components/uploadpopup'
@@ -11,6 +9,8 @@ import DocumentTypes from '../components/sidebar/documenttypes'
 import APIService from '../components/sidebar/apiservices'
 import ModelTraining from '../components/sidebar/modeltraining'
 import Settings from '../components/sidebar/settings'
+import SettingPopup from '../components/settingpopup'
+import TrainPopup from '../components/trainpopup'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../reducers/loginReducer'
@@ -19,7 +19,8 @@ import BASE_URL from '../backend'
 function DashBoard(props) {
     console.log('Inside dashboard')
     const { user_id, session_id } = useSelector((state) => state.auth)
-    const [activeTab, setActiveTab] = useState('DocumentType')
+    // const [activeTab, setActiveTab] = useState('DocumentType')
+    const [activeTab, setActiveTab] = useState('Model&Training')
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [docTypes, setDocTypes] = useState([])
@@ -73,10 +74,11 @@ function DashBoard(props) {
         dispatch(logout())
         navigate('/')
     }
-
     return (
-        <div class="container h-screen">
+        <div class="container min-h-screen">
             <UPopup selectedDocType={selectedDocType} />
+            <TrainPopup />
+            <SettingPopup />
             <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="px-3 py-3 lg:px-5 lg:pl-3">
                     <div class="flex items-center justify-between">
@@ -158,15 +160,9 @@ function DashBoard(props) {
                                         <li>
                                             <a
                                                 href="#"
-                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                role="menuitem"
-                                            >
-                                                Dashboard
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a
-                                                href="#"
+                                                onClick={() =>
+                                                    handleTabClick('Settings')
+                                                }
                                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 role="menuitem"
                                             >
@@ -174,13 +170,13 @@ function DashBoard(props) {
                                             </a>
                                         </li>
                                         <li>
-                                            <a
-                                                href="#"
+                                            <div
+                                                onClick={handleSignout}
                                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 role="menuitem"
                                             >
-                                                Documents
-                                            </a>
+                                                Sign out
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -348,8 +344,7 @@ function DashBoard(props) {
                     </ul>
                 </div>
             </aside>
-
-            {renderPageContent()}
+            <div>{renderPageContent()}</div>
         </div>
     )
 }

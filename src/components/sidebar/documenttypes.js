@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import DocType from '../dashboardcomponents/doctype'
+import FormType from '../dashboardcomponents/formtype'
 import BASE_URL from '../../backend'
 
 function DocumentTypes(props) {
@@ -82,8 +83,10 @@ function DocumentTypes(props) {
     }
 
     return (
-        <div class="p-4 sm:ml-64">
-            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+        <div class="pt-4 min-w-screen sm:ml-64">
+            {/* <div class="flex p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14"> */}
+            {/* <div class="grid grid-flow-col auto-cols-[minmax(_2fr,_3fr)] border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"> */}
+            <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-8 ml-3 p-4">
                 {docTypes &&
                     docTypes.map((doc, index) => (
                         <DocType
@@ -94,48 +97,11 @@ function DocumentTypes(props) {
                         />
                     ))}
 
-                {/* This components includes a form for adding a new document type */}
-                <div class="document-card">
-                    <div>
-                        <label for="name">Document Name:</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={documentName}
-                            onChange={(e) => setDocumentName(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label for="image_path">Image Path:</label>
-                        <input
-                            type="file"
-                            id="image_path"
-                            name="image_path"
-                            onChange={handleFileChange}
-                        />
-                    </div>
-                    <div>
-                        <label for="model_type">Model Type:</label>
-                        <select
-                            value={modelType}
-                            onChange={(event) =>
-                                setModelType(event.target.value)
-                            }
-                            name="model_type"
-                            placeholder="Model Type"
-                        >
-                            <option value="RB">Rule Based</option>
-                            <option value="ML">ML</option>
-                            <option value="QA">Question Answering</option>
-                            <option value="EL">Entity Linking</option>
-                        </select>
-                    </div>
-                    <button type="submit" onClick={createNewDocumentType}>
-                        Submit
-                    </button>
-                </div>
+                <FormType />
             </div>
+
+            {/* This components includes a form for adding a new document type */}
+            {/* </div> */}
         </div>
     )
 }

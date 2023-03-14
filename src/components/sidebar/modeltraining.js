@@ -1,13 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Th from './thcomponent'
 import { Link } from 'react-router-dom'
 import TButton from '../tbutton'
+import TrainModal from '../TrainModal'
 
 function ModelTraining(props) {
+    const [isOpen, setIsOpen] = useState(false)
+
+    function handleOpenModal() {
+        setIsOpen(true)
+    }
+
+    function handleCloseModal() {
+        setIsOpen(false)
+    }
     console.log('Inside the model training component')
     return (
         <div class="p-4 sm:ml-64">
-            <div class="p-4 border-2 text-white border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+            <TrainModal isOpen={isOpen} onCloseModal={handleCloseModal} />
+
+            <div class="p-4 border-2 text-white border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-8">
                 {
                     <div class=" relative overflow-x-auto shadow-md sm:rounded-lg">
                         <div class="flex pb-4 pt-4 pl-4 bg-white dark:bg-gray-900">
@@ -39,6 +51,10 @@ function ModelTraining(props) {
                             </div>
 
                             <TButton label="Delete" />
+                            <TButton
+                                label="Train New Model"
+                                onClick={handleOpenModal}
+                            />
                         </div>
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

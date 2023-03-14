@@ -28,6 +28,7 @@ export default function App() {
     return (
         <>
             <Router>
+                {console.log('Inside the app.js')}
                 {!window.location.pathname.includes('/dashboard') &&
                     !window.location.pathname.includes('/jsonpage') &&
                     !window.location.pathname.includes('/annotate') && (
@@ -35,7 +36,6 @@ export default function App() {
                     )}
 
                 <Routes>
-                    <Route exact path="/test" element={<Login />} />
                     <Route exact path="/" element={<HomePage />} />
                     <Route exact path="/UploadPage" element={<UploadPage />} />
                     <Route exact path="/login" element={<LogIn />} />
