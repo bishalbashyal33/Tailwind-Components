@@ -23,6 +23,7 @@ function DashBoard(props) {
     const [activeTab, setActiveTab] = useState('Model&Training')
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const { username, email } = useSelector((state) => state.auth)
     const [docTypes, setDocTypes] = useState([])
     const [selectedDocType, setSelectedDocType] = useState(null)
 
@@ -108,10 +109,7 @@ function DashBoard(props) {
                                     ></path>
                                 </svg>
                             </button>
-                            <a
-                                href="https://flowbite.com"
-                                class="flex ml-2 md:mr-24"
-                            >
+                            <a href="/" class="flex ml-2 md:mr-24">
                                 <img
                                     src="https://flowbite.com/docs/images/logo.svg"
                                     class="h-8 mr-3"
@@ -150,13 +148,13 @@ function DashBoard(props) {
                                             class="text-sm text-gray-900 dark:text-white"
                                             role="none"
                                         >
-                                            Bishal Bashyal
+                                            {username}
                                         </p>
                                         <p
                                             class="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                                             role="none"
                                         >
-                                            bishal@Docbite.com
+                                            {email}
                                         </p>
                                     </div>
                                     <ul class="py-1" role="none">

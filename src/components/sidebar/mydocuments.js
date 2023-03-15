@@ -138,11 +138,9 @@ function MyDocuments(props) {
                                             selected={selected}
                                             setSelected={setSelected}
                                             docId={doc.image_id}
-                                            docname={doc.image_id}
-                                            docuploadedby={
-                                                'Aayush' || doc?.uploadedby
-                                            }
-                                            doctype={doc.doc_type_id}
+                                            docname={doc.filename}
+                                            docuploadedby={doc?.owner}
+                                            doctype={doc.doc_type_name}
                                             docstatus={doc.status}
                                             docaction="Edit"
                                         />
