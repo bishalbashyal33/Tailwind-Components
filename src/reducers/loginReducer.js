@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { current } from '@reduxjs/toolkit'
-import { userLogin } from '../actions/loginAction'
+import { userLogin, userSignup } from '../actions/loginAction'
 import axios from 'axios'
 import BASE_URL from '../backend'
 
@@ -71,6 +71,28 @@ const userAuth = createSlice({
             console.log('state: ', state)
             state.loading = false
             state.error = payload
+            console.log('state: ', state)
+        },
+        [userSignup.pending]: (state) => {
+            console.log('state: ', state)
+            console.log('SignupRequest dispatched 4')
+            console.log("SignupRequest's state: ", current(state))
+            state.loading = true
+            state.error = null
+            console.log('state: ', state)
+
+            return state
+        },
+        [userSignup.fulfilled]: (state, { payload }) => {
+            console.log('state: ', state)
+
+            state.loading = false
+            state.error = !payload.success
+        },
+        [userSignup.rejected]: (state, { payload }) => {
+            console.log('state: ', state)
+            state.loading = false
+            state.error = !payload.success
             console.log('state: ', state)
         },
     },
