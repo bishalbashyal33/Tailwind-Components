@@ -276,7 +276,10 @@ function AnnotationPage(props) {
         <div class="mt-12 pb-24 dark:bg-gray-800">
             <div class="fixed z-20 bottom-0  left-0 pt-6 px-4 flex-shrink-0  w-550 mt-200 border border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <div class="flex flex-grow justify-start">
-                    <a href={`${BASE_URL}/annotate/download/${docId}`} download>
+                    <a
+                        href={`${BASE_URL}/annotate/download/json/${docId}`}
+                        download
+                    >
                         <TButton label="Download"></TButton>
                     </a>
                     <div>

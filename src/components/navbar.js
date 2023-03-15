@@ -11,7 +11,8 @@ function Navbar(props) {
     const handleSignout = async (e) => {
         console.log('sign out')
         dispatch(logout())
-        navigate('/')
+        window.location.href = '/'
+        // navigate('/')
     }
 
     return (

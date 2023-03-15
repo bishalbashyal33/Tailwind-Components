@@ -60,6 +60,7 @@ function Th(props) {
                 <Link
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     to={`/annotate/${props.docId}`}
+                    key={Math.random()}
                     state={{ documents: props.documents }}
                 >
                     {props.docaction}

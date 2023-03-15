@@ -5,8 +5,11 @@ function JsonSpanElement(props) {
         <div class="block w-600  border-gray-200  shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
             <div class="flex flex-grow ml-16 py-2">
                 <div class="flex justify-start">
-                    <span class="text-white font-medium ">{props.label}</span>
+                    <span class="text-white font-medium w-48">
+                        {props.label}
+                    </span>
                     <input
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         onClick={(event) => props.handleRef(event, props.index)}
                         onChange={(event) =>
                             props.handleFieldNameChange(event, props.index)

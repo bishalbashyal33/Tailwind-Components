@@ -9,7 +9,7 @@ import ModelButton from './ModelDropDown'
 function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
     console.log(doc_type_details)
     const [models, setModels] = useState([])
-    const [model_id, setModelId] = useState(doc_type_details?.model_id || '')
+    const [model_id, setModelId] = useState(doc_type_details?.model || '')
     const [opendropdown, setOpenDropdown] = useState(false)
 
     function handleOverlayClick(e) {
@@ -105,6 +105,7 @@ function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
                                 setOpenDropdown={setOpenDropdown}
                                 models={models}
                                 setModelId={setModelId}
+                                model={model_id}
                             />
                         </div>
                     </div>

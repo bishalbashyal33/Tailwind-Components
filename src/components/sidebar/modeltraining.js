@@ -192,7 +192,7 @@ function ModelTraining(props) {
                                             >
                                                 <Link
                                                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                    to={`/annotate/1`}
+                                                    to={`/dashboard`}
                                                 >
                                                     {model['id']}
                                                 </Link>
