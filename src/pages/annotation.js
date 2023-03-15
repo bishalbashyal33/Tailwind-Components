@@ -326,7 +326,7 @@ function AnnotationPage(props) {
                             </svg>
                         </Link>
                     )}
-                    <span class="text-white">
+                    <span class=" text-gray-500">
                         {currentDocumentIndex + 1} of {documentList.length}
                     </span>
                     {documentList && (
