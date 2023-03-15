@@ -1,9 +1,16 @@
-import React, { useState } from 'react'
-import { saveAs } from 'file-saver'
+// Modal.js
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import BASE_URL from '../backend'
+import DocButton from './DocDropDown'
 
-function UPopup(props) {
+function UploadModal({ isOpen, onCloseModal, selectedDocType }) {
+    function handleOverlayClick(e) {
+        if (e.target.id === 'modal-overlay') {
+            onCloseModal(false)
+        }
+    }
+
     const [file, setFile] = useState(null)
     const handleFileSelect = () => {
         const fileInput = document.createElement('input')
@@ -11,6 +18,8 @@ function UPopup(props) {
         fileInput.setAttribute('accept', 'image/*')
         fileInput.setAttribute('multiple', true)
         const image = document.getElementById('selected-image')
+
+        fileInput.type = 'file'
 
         // Add an event listener for when a file is selected
         fileInput.addEventListener('change', (event) => {
@@ -36,85 +45,46 @@ function UPopup(props) {
         console.log(file)
         event.preventDefault()
 
-        // if (file) {
-        //     const selectedImage = document.getElementById('selected-image');
-        //     const reader = new FileReader();
-        //     reader.readAsDataURL(file);
-
-        //     selectedImage.setAttribute('src',reader.result);
-        // }
         if (file) {
             // Create a FormData object
-            // const formData = new FormData()
-            // formData.append('files', file)
-
             const formData = new FormData()
-            for (let i = 0; i < file.length; i++) {
-                formData.append('files', file[i])
-            }
+            formData.append('file', file, file.name)
 
             // Send the FormData object as the request body in the POST request
-            console.log(
-                'sending multiple imaeg to backend',
-                file,
-                props.selectedDocType
-            )
             const response = await axios.post(
-                `${BASE_URL}/annotation/post/multiple/${props.selectedDocType}`,
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
+                `${BASE_URL}/annotation/post/${selectedDocType}`,
+                formData
             )
-            // const response = await axios.post(
-            //     `${BASE_URL}/annotation/post/multiple/${props.selectedDocType}`,
-            //     formData
-            // )
-            if (response.status == 200) {
-                setFile(null)
+            if (response.status == 202) {
                 window.location.href = '/dashboard'
             }
-            console.log(response)
-            setFile(null)
+            console.log(response.data)
         }
     }
 
-    const handleClose = (event) => {
-        props.setSelectedDocType('')
+    if (!isOpen) {
+        return null
     }
 
-    function handleOverlayClick(e) {
-        if (e.target.id === 'staticModal') {
-            props.setSelectedDocType('')
-        }
-    }
-    console.log('Opened dialog for image upload')
     return (
         <div
-            id="staticModal"
-            data-modal-backdrop="static"
-            tabindex="-1"
+            id="modal-overlay"
             onClick={handleOverlayClick}
-            aria-hidden="false"
-            class={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${
-                props.selectedDocType ? '' : 'hidden'
-            } :h-full`}
+            className={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${
+                isOpen
+                    ? 'opacity-100 pointer-events-auto'
+                    : 'opacity-0 pointer-events-none'
+            }`}
         >
             <div class="relative w-full h-full max-w-2xl md:h-auto">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            {file
-                                ? `Selected ${file.length} images`
-                                : 'Select an image'}
+                            Upload
                         </h3>
                         <button
                             type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                            data-modal-hide="staticModal"
-                            onClick={handleClose}
                         >
                             <svg
                                 class="w-5 h-5"
@@ -165,4 +135,4 @@ function UPopup(props) {
     )
 }
 
-export default UPopup
+export default UploadModal

@@ -43,7 +43,11 @@ function DocType(props) {
     }
     return (
         <div class="m-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-            <SettingModal isOpen={isOpen} onCloseModal={handleCloseModal} />
+            <SettingModal
+                isOpen={isOpen}
+                onCloseModal={handleCloseModal}
+                doc_type_details={props.doc}
+            />
 
             <div class="flex">
                 <div class="flex justify-start">

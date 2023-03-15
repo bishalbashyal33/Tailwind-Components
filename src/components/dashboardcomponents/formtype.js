@@ -1,5 +1,4 @@
 import React from 'react'
-import SettingPopup from '../settingpopup'
 import TButton from '../tbutton'
 
 function FormType(props) {

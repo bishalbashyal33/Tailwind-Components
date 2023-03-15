@@ -1,15 +1,61 @@
 // Modal.js
 
 import UDButton from './udropdown'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import BASE_URL from '../backend'
+import ModelButton from './ModelDropDown'
 
-function TrainModal({ isOpen, onCloseModal }) {
-    if (!isOpen) return null
+function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
+    console.log(doc_type_details)
+    const [models, setModels] = useState([])
+    const [model_id, setModelId] = useState(doc_type_details?.model_id || '')
+    const [opendropdown, setOpenDropdown] = useState(false)
+
     function handleOverlayClick(e) {
         if (e.target.id === 'modal-overlay') {
             onCloseModal()
         }
     }
+    const handleModelAssignment = (event) => {
+        console.log('Model assignment started', model_id, doc_type_details.id)
+        axios
+            .post(
+                `${BASE_URL}/doc_type/${doc_type_details.id}/model`,
+                { model_id: model_id },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
+            .then((response) => {
+                console.log('Request successful', response.data)
+            })
+            .catch(function (response) {
+                console.log(response)
+            })
+        onCloseModal()
+        window.location.href('/dashboard')
+    }
+    useEffect(() => {
+        console.log('inside axios')
+        // Get all the document types
+        axios(`${BASE_URL}/predict/`, {
+            method: 'GET',
+            withCredentials: true,
+        })
+            .then((res) => {
+                console.log(res)
+                setModels(res.data.models)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [])
+    if (!isOpen) return null
+
     return (
         <div
             id="modal-overlay"
@@ -49,16 +95,16 @@ function TrainModal({ isOpen, onCloseModal }) {
                     <div class="p-6 flex justify-start">
                         <div class="flex flex-col justify-center">
                             <span class=" font-normal text-gray-900 dark:text-white">
-                                Modal Path:
+                                Select Model:
                             </span>
                         </div>
                         <div class="ml-2 flex flex-1 justify-start">
-                            <UDButton
-                                label="Select Path"
-                                field1="Demo Path"
-                                field2="Demo Path"
-                                field3="Demo Path"
-                                field4="Demo Path"
+                            <ModelButton
+                                label="Select Model"
+                                opendropdown={opendropdown}
+                                setOpenDropdown={setOpenDropdown}
+                                models={models}
+                                setModelId={setModelId}
                             />
                         </div>
                     </div>
@@ -66,7 +112,7 @@ function TrainModal({ isOpen, onCloseModal }) {
                     <div class="pl-6 flex justify-start">
                         <div class="flex flex-col justify-center">
                             <span class="  text-gray-900 dark:text-white">
-                                Modal Type:
+                                Task Type:
                             </span>
                         </div>
                         <div class="ml-2 flex flex-1 justify-start">
@@ -78,8 +124,7 @@ function TrainModal({ isOpen, onCloseModal }) {
 
                     <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                         <button
-                            //data-modal-hide="staticModal"
-                            type="button"
+                            onClick={handleModelAssignment}
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
                             Submit
@@ -97,4 +142,4 @@ function TrainModal({ isOpen, onCloseModal }) {
     )
 }
 
-export default TrainModal
+export default SettingModal

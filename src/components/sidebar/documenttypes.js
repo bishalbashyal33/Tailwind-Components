@@ -3,6 +3,7 @@ import axios from 'axios'
 import DocType from '../dashboardcomponents/doctype'
 import FormType from '../dashboardcomponents/formtype'
 import BASE_URL from '../../backend'
+import TButton from '../tbutton'
 
 function DocumentTypes(props) {
     const [file, setFile] = useState(null)
@@ -45,12 +46,6 @@ function DocumentTypes(props) {
     }
 
     const createNewDocumentType = (event) => {
-        var formData = new FormData()
-        formData.append('name', documentName)
-        formData.append('task_type', modelType)
-        formData.append('file', file)
-        formData.append('model', 'Token Classification')
-        console.log(documentName, modelType, file, 'Token Classification')
         axios
             .post(
                 `${BASE_URL}/doc_type/post/`,
@@ -97,7 +92,52 @@ function DocumentTypes(props) {
                         />
                     ))}
 
-                <FormType />
+                {/* <FormType /> */}
+                <div class="block max-w-sm p-6 m-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <div class="flex">
+                        <div class="flex justify-start">
+                            <span class="mb-2  dark:text-white">
+                                New Document Type
+                            </span>
+                        </div>
+                    </div>
+
+                    <ul class="mb-2 tracking-tight text-gray-900 dark:text-gray-200">
+                        <li>
+                            Name:
+                            <input
+                                type="float"
+                                id="doc_name"
+                                onChange={(e) =>
+                                    setDocumentName(e.target.value)
+                                }
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="John"
+                                value={documentName}
+                                required
+                            />
+                        </li>
+                        <li>
+                            Task Type:{' '}
+                            <input
+                                type="text"
+                                onChange={(e) => setModelType(e.target.value)}
+                                value={modelType}
+                                id="model_type"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="John"
+                                required
+                            />
+                        </li>
+                    </ul>
+
+                    <div class="flex justify-center">
+                        <TButton
+                            label="Save"
+                            onClick={createNewDocumentType}
+                        ></TButton>
+                    </div>
+                </div>
             </div>
 
             {/* This components includes a form for adding a new document type */}

@@ -1,10 +1,72 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import Th from './thcomponent'
 import { Link } from 'react-router-dom'
 import TButton from '../tbutton'
 import TrainModal from '../TrainModal'
+import BASE_URL from '../../backend'
 
 function ModelTraining(props) {
+    const [models, setModels] = useState([])
+    const [selected, setSelected] = useState([])
+
+    const handleCheckClick = (event, model_id) => {
+        console.log('Handled check click')
+        console.log(selected)
+
+        if (event.target.checked) {
+            setSelected([...selected, model_id])
+        } else {
+            setSelected(selected.filter((item) => item !== model_id))
+        }
+    }
+
+    useEffect(() => {
+        console.log('Fetching the model data')
+        axios
+            .get(`${BASE_URL}/predict/`, { withCredentials: true })
+            .then((res) => {
+                console.log(res.data)
+                setModels(res.data.models)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [])
+
+    const handleAllChecks = (event) => {
+        console.log('Handled checks')
+        // if (event.target.checked) {
+        //     setSelected(().map((doc) => doc.id))
+        // } else {
+        //     setSelected([])
+        // }
+    }
+    const handleDelete = (event) => {
+        console.log('Selected Elements: ', selected)
+        axios
+            .post(
+                `${BASE_URL}/train/delete_multiple`,
+                selected,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
+            .then((res) => {
+                setSelected(res.data.success)
+                setModels((prev) =>
+                    prev.filter((model) => !res.data.success.includes(model.id))
+                )
+                console.log('Successfully deleted ', res.data.success)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
     const [isOpen, setIsOpen] = useState(false)
 
     function handleOpenModal() {
@@ -17,7 +79,11 @@ function ModelTraining(props) {
     console.log('Inside the model training component')
     return (
         <div class="p-4 sm:ml-64">
-            <TrainModal isOpen={isOpen} onCloseModal={handleCloseModal} />
+            <TrainModal
+                isOpen={isOpen}
+                onCloseModal={handleCloseModal}
+                setModels={setModels}
+            />
 
             <div class="p-4 border-2 text-white border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-8">
                 {
@@ -50,7 +116,7 @@ function ModelTraining(props) {
                                 />
                             </div>
 
-                            <TButton label="Delete" />
+                            <TButton label="Delete" onClick={handleDelete} />
                             <TButton
                                 label="Train New Model"
                                 onClick={handleOpenModal}
@@ -78,13 +144,13 @@ function ModelTraining(props) {
                                         Model name
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Model Type
+                                        Document Type
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Accuracy
+                                        Version
                                     </th>
                                     <th scope="col" class="px-6 py-3">
-                                        Precision
+                                        Created at
                                     </th>
                                     <th scope="col" class="px-6 py-3">
                                         F1 Score
@@ -92,39 +158,64 @@ function ModelTraining(props) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="w-4 p-4">
-                                        <div class="flex items-center">
-                                            <input
-                                                id="checkbox-table-search-1"
-                                                type="checkbox"
-                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                            />
-                                            <label
-                                                for="checkbox-table-search-1"
-                                                class="sr-only"
-                                            >
-                                                checkbox
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <th
-                                        scope="row"
-                                        class="flex px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                    >
-                                        <Link
-                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                            to={`/annotate/1`}
+                                {models &&
+                                    models.map((model) => (
+                                        <tr
+                                            key={model['id']}
+                                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                         >
-                                            {'Model 1'}
-                                        </Link>
-                                    </th>
-
-                                    <td class="px-6 py-4">{'Passport'}</td>
-                                    <td class="px-6 py-4">{'0.982'}</td>
-                                    <td class="px-6 py-4">{'0.952'}</td>
-                                    <td class="px-6 py-4">{'0.968'}</td>
-                                </tr>
+                                            <td class="w-4 p-4">
+                                                <div class="flex items-center">
+                                                    <input
+                                                        key={model['id']}
+                                                        onClick={(e) =>
+                                                            handleCheckClick(
+                                                                e,
+                                                                model['id']
+                                                            )
+                                                        }
+                                                        id="checkbox-table-search-1"
+                                                        type="checkbox"
+                                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                    />
+                                                    <label
+                                                        for="checkbox-table-search-1"
+                                                        class="sr-only"
+                                                    >
+                                                        checkbox
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <th
+                                                scope="row"
+                                                class="flex px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                            >
+                                                <Link
+                                                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                                    to={`/annotate/1`}
+                                                >
+                                                    {model['id']}
+                                                </Link>
+                                            </th>
+                                            <td class="px-6 py-4">
+                                                {model['doc_type_name']}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                {model['version']}
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                {
+                                                    new Date(
+                                                        model['created_at']
+                                                    )
+                                                        .toISOString()
+                                                        .split('T')[0]
+                                                }
+                                            </td>
+                                            <td class="px-6 py-4">{0.86}</td>
+                                        </tr>
+                                    ))}
+                                {!models && <h1>Train a new Model</h1>}
                                 {/* <Th
                                     docname="HuggingFace"
                                     docuploadedby="GPT"

@@ -1,15 +1,81 @@
 // Modal.js
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import BASE_URL from '../backend'
+import DocButton from './DocDropDown'
 
-import UDButton from './udropdown'
-import React from 'react'
-
-function TrainModal({ isOpen, onCloseModal }) {
-    if (!isOpen) return null
+function TrainModal({ isOpen, onCloseModal, setModels }) {
+    const [docTypes, setDocTypes] = useState([])
     function handleOverlayClick(e) {
         if (e.target.id === 'modal-overlay') {
             onCloseModal()
         }
     }
+
+    useEffect(() => {
+        console.log('inside axios')
+        // Get all the document types
+        axios(`${BASE_URL}/doc_type/get_all/`, {
+            method: 'GET',
+            withCredentials: true,
+        })
+            .then((res) => {
+                console.log(res)
+                setDocTypes(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [])
+
+    const [opendropdown, setOpenDropdown] = useState(false)
+
+    const [doc_type, setDocType] = useState('')
+    const [epoch, setEpochs] = useState(3)
+    const [train_split, setTrainSplit] = useState(0.8)
+
+    const onTrainModel = (event) => {
+        if (doc_type === '') {
+            console.log('Doc_type not defined, cannot train the model')
+            return
+        }
+        console.log('Model training started')
+        console.log(doc_type)
+        console.log(epoch)
+        console.log(train_split)
+        axios
+            .post(
+                `${BASE_URL}/train/`,
+                {
+                    doc_type: doc_type,
+                    train_split: train_split,
+                    epoch: epoch,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                },
+                { withCredentials: true }
+            )
+            .then((response) => {
+                console.log('Request successful', response.data)
+                setModels((models) => [...models, response.data])
+            })
+            .catch(function (response) {
+                console.log(response)
+            })
+        onCloseModal()
+    }
+    const handleDropdown = (e) => {
+        console.log('Drop down button clicked', opendropdown)
+        setOpenDropdown(!opendropdown)
+    }
+
+    if (!isOpen) {
+        return null
+    }
+
     return (
         <div
             id="modal-overlay"
@@ -30,7 +96,7 @@ function TrainModal({ isOpen, onCloseModal }) {
                             type="button"
                             onClick={onCloseModal}
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                            data-modal-hide="trainModal"
+                            data-modal-hide="mytrainModal"
                         >
                             <svg
                                 class="w-5 h-5"
@@ -54,12 +120,14 @@ function TrainModal({ isOpen, onCloseModal }) {
                             </span>
                         </div>
                         <div class="ml-2 flex flex-1 justify-start">
-                            <UDButton
-                                label="DropDown"
-                                field1="Demo Path"
-                                field2="Demo Path"
-                                field3="Demo Path"
-                                field4="Demo Path"
+                            {/* Dropdown button */}
+
+                            <DocButton
+                                label="Select Document Type"
+                                opendropdown={opendropdown}
+                                setOpenDropdown={setOpenDropdown}
+                                doc_types={docTypes}
+                                setDocType={setDocType}
                             />
                         </div>
                     </div>
@@ -73,6 +141,8 @@ function TrainModal({ isOpen, onCloseModal }) {
                         <div class="ml-2 flex flex-1 justify-start">
                             <input
                                 type="int"
+                                onChange={(e) => setEpochs(e.target.value)}
+                                value={epoch}
                                 id="epoch_number"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="John"
@@ -90,7 +160,9 @@ function TrainModal({ isOpen, onCloseModal }) {
                         <div class="ml-2 flex flex-1 justify-start mt-2">
                             <input
                                 type="float"
+                                onChange={(e) => setTrainSplit(e.target.value)}
                                 id="epoch_number"
+                                value={train_split}
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="John"
                                 required
@@ -101,10 +173,10 @@ function TrainModal({ isOpen, onCloseModal }) {
                     <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                         <button
                             //data-modal-hide="staticModal"
-                            type="button"
+                            onClick={onTrainModel}
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                            Submit
+                            Train
                         </button>
                         <button
                             //  data-modal-hide="staticModal"

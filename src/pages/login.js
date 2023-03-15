@@ -39,7 +39,7 @@ function LogIn(props) {
         console.log(userCredentials)
         dispatch(userLogin(userCredentials))
             .then((res) => {
-                navigate('/dashboard')
+                window.location.href = '/dashboard'
             })
             .catch((err) => {
                 navigate('/login')
