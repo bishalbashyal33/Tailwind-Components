@@ -52,7 +52,7 @@ function DocumentTypes(props) {
                 {
                     name: documentName,
                     task_type: modelType,
-                    model: 'Token Classification',
+                    model: '',
                 },
                 {
                     headers: {
@@ -74,6 +74,7 @@ function DocumentTypes(props) {
 
         // Reset the form data
         setDocumentName('')
+        setModelType('')
         setFile(null)
     }
 
