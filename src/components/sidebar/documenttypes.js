@@ -1,54 +1,36 @@
-import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useState, useEffect } from 'react'
 import DocType from '../dashboardcomponents/doctype'
-import FormType from '../dashboardcomponents/formtype'
-import BASE_URL from '../../backend'
 import TButton from '../tbutton'
 
-function DocumentTypes(props) {
-    const [file, setFile] = useState(null)
-    const [documentName, setDocumentName] = useState('')
-    const [docTypes, setDocTypes] = useState([])
-    const [modelType, setModelType] = useState('')
+function DocumentTypes ( { updateDocTypes } ) {
+    console.log( 'Rendering DocumentTypes' )
+    const [docTypes, setDocTypes] = useState( [] )
+    const [documentName, setDocumentName] = useState( '' )
+    const [modelType, setModelType] = useState( '' )
 
-    const handleFileChange = (event) => {
-        setFile(event.target.files[0])
-    }
-
-    useEffect(() => {
-        console.log('inside axios')
+    useEffect( () => {
         // Get all the document types
-        axios(`${BASE_URL}/doc_type/get_all/`, {
+        console.log( 'dashboard: Fetching all the document types' )
+        axios( `${process.env.REACT_APP_BACKEND}/doc_type/get_all/`, {
             method: 'GET',
             withCredentials: true,
-        })
-            .then((res) => {
-                console.log(res)
-                setDocTypes(res.data)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, [])
+        } )
+            .then( ( res ) => {
+                console.log( res )
+                setDocTypes( res.data )
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
+    }, [] )
 
-    const handleDocumentDelete = (id) => {
-        axios
-            .delete(`${BASE_URL}/doc_type/delete/${id}/`, {
-                withCredentials: true,
-            })
-            .then((res) => {
-                console.log(res)
-                setDocTypes(docTypes.filter((docType) => docType.id !== id))
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
 
-    const createNewDocumentType = (event) => {
+    const createNewDocumentType = ( event ) => {
+        console.log( 'Creating new document type' )
         axios
             .post(
-                `${BASE_URL}/doc_type/post/`,
+                `${process.env.REACT_APP_BACKEND}/doc_type/post/`,
                 {
                     name: documentName,
                     task_type: modelType,
@@ -61,39 +43,41 @@ function DocumentTypes(props) {
                 },
                 { withCredentials: true }
             )
-            .then((response) => response.data)
-            .then((data) => {
+            .then( ( response ) => response.data )
+            .then( ( data ) => {
                 //handle success
-                console.log('Request successful', data)
-                setDocTypes([...docTypes, data])
-            })
-            .catch(function (response) {
+                updateDocTypes( [...docTypes, data] )
+                setDocTypes( [...docTypes, data] )
+            } )
+            .catch( function ( err ) {
                 //handle error
-                console.log(response)
-            })
+                console.log( err )
+            } )
 
         // Reset the form data
-        setDocumentName('')
-        setModelType('')
-        setFile(null)
+        setDocumentName( '' )
+        setModelType( '' )
+    }
+
+    const handleDocTypeDelete = ( id ) => {
+        console.log( 'Deleting document type' )
+        updateDocTypes( docTypes.filter( ( doc ) => doc.id !== id ) )
     }
 
     return (
         <div class="pt-4 min-w-screen sm:ml-64">
-            {/* <div class="flex p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14"> */}
-            {/* <div class="grid grid-flow-col auto-cols-[minmax(_2fr,_3fr)] border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"> */}
             <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-8 ml-3 p-4">
                 {docTypes &&
-                    docTypes.map((doc, index) => (
+                    docTypes.map( ( doc, index ) => (
                         <DocType
                             doc={doc}
                             key={index}
                             id={doc['id']}
-                            setDocTypes={setDocTypes}
+                            handleDocTypeDelete={handleDocTypeDelete}
                         />
-                    ))}
+                    ) )}
 
-                {/* <FormType /> */}
+                {/* Form for New Document Type */}
                 <div class="block max-w-sm p-6 m-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                     <div class="flex">
                         <div class="flex justify-start">
@@ -109,8 +93,8 @@ function DocumentTypes(props) {
                             <input
                                 type="float"
                                 id="doc_name"
-                                onChange={(e) =>
-                                    setDocumentName(e.target.value)
+                                onChange={( e ) =>
+                                    setDocumentName( e.target.value )
                                 }
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="John"
@@ -122,7 +106,7 @@ function DocumentTypes(props) {
                             Task Type:{' '}
                             <input
                                 type="text"
-                                onChange={(e) => setModelType(e.target.value)}
+                                onChange={( e ) => setModelType( e.target.value )}
                                 value={modelType}
                                 id="model_type"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -140,9 +124,6 @@ function DocumentTypes(props) {
                     </div>
                 </div>
             </div>
-
-            {/* This components includes a form for adding a new document type */}
-            {/* </div> */}
         </div>
     )
 }

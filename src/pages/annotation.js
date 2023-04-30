@@ -1,90 +1,86 @@
-import React, { useState, useEffect, useRef } from 'react'
-import JsonHeadElement from '../components/jsonheadelement'
-import JsonSpanElement from '../components/jsonspanelement'
-import TButton from '../components/tbutton'
+import axios from 'axios'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router-dom'
-import axios from 'axios'
-import BASE_URL from '../backend'
 
+import TButton from '../components/tbutton'
+import JsonSpanElement from '../components/jsonspanelement'
+import DownloadModal from '../components/modals/DownloadModal'
 import './annotation.css'
 
-function AnnotationPage(props) {
+function AnnotationPage () {
     const { docId } = useParams()
     const location = useLocation()
     const navigate = useNavigate()
-    const imageRef = useRef(null)
-    const imgContainerRef = useRef(null)
-    const documentList = location.state.documents
+    const imageRef = useRef( null )
+    const imgContainerRef = useRef( null )
+    const [isOpen, setIsOpen] = useState( false )
+    const [documentList, setDocumentList] = useState( location.state.documents )
 
     const [imgUrl, setImgUrl] = useState(
-        `${BASE_URL}/annotation/get_file/${docId}`
+        `${process.env.REACT_APP_BACKEND}/annotation/get_file/${docId}`
     )
-    const [bboxes, setBboxes] = useState([])
-    const [actualBboxes, setactualBboxes] = useState([])
 
-    const [zoom, setZoom] = useState(100)
+
+    const [bboxes, setBboxes] = useState( [] )
+    const [actualBboxes, setactualBboxes] = useState( [] )
+
+    const [zoom, setZoom] = useState( 100 )
     const imageWidth = `${zoom}%`
-    const [isDrawing, setIsDrawing] = useState(false)
-    const [currentField, setCurrentField] = useState(0)
-    const [annotationStatus, setAnnotationStatus] = useState(null)
-    const [currentDocumentIndex, setCurrentDocumentIndex] = useState(null)
+    const [isDrawing, setIsDrawing] = useState( false )
+    const [currentField, setCurrentField] = useState( 0 )
+    const [annotationStatus, setAnnotationStatus] = useState( null )
+    const [currentDocumentIndex, setCurrentDocumentIndex] = useState( null )
 
-    const [fields, setFields] = useState([])
-    const [metadata, setMetadata] = useState({})
-    const [width, setWidth] = useState(0)
-    const [height, setHeight] = useState(0)
+    const [fields, setFields] = useState( [] )
+    const [metadata, setMetadata] = useState( {} )
+    const [width, setWidth] = useState( 0 )
+    const [height, setHeight] = useState( 0 )
 
-    const [origstartX, setOrigStartX] = useState(0)
-    const [origstartY, setOrigStartY] = useState(0)
-    const [origendX, setOrigEndX] = useState(0)
-    const [origendY, setOrigEndY] = useState(0)
-
-    const handleZoomChange = (event) => {
-        console.log(imageWidth)
-        setZoom(event.target.value)
-    }
-
-    const handleFieldRef = (event, index) => {
-        setCurrentField(index)
-    }
+    const [origstartX, setOrigStartX] = useState( 0 )
+    const [origstartY, setOrigStartY] = useState( 0 )
+    const [origendX, setOrigEndX] = useState( 0 )
+    const [origendY, setOrigEndY] = useState( 0 )
 
     // Fetch the ocr and annotation data from the backend
-    useEffect(() => {
-        setCurrentDocumentIndex((prev) => {
-            if (documentList.findIndex((doc) => doc.image_id == docId))
-                return documentList.findIndex((doc) => doc.image_id == docId)
+    useEffect( () => {
+        setCurrentDocumentIndex( ( prev ) => {
+            if ( documentList.findIndex( ( doc ) => doc.image_id == docId ) )
+                return documentList.findIndex( ( doc ) => doc.image_id == docId )
             else return 0
-        })
-        axios(`${BASE_URL}/annotate/get/${docId}`, {
+        } )
+        setImgUrl(
+            `${process.env.REACT_APP_BACKEND}/annotation/get_file/${docId}`
+        )
+        axios( `${process.env.REACT_APP_BACKEND}/annotate/get/${docId}`, {
             method: 'GET',
             withCredentials: true,
-        })
-            .then((res) => {
-                setMetadata(res.data.metadata)
-                setAnnotationStatus(res.data.metadata.status === 'Processed.')
-                setWidth(res.data.metadata.width)
-                setHeight(res.data.metadata.height)
+        } )
+            .then( ( res ) => {
+                setMetadata( res.data.metadata )
+                setAnnotationStatus( res.data.metadata.status === 'Processed.' )
+                setWidth( res.data.metadata.width )
+                setHeight( res.data.metadata.height )
                 // reads and saves the information of the field
                 setFields(
-                    res.data.annotation.map((field) => ({
+                    res.data.annotation.map( ( field ) => ( {
                         id: field.id,
                         name: field.name,
                         value: field.value || '',
                         word_ids: field.word_ids || [],
-                    }))
+                    } ) )
                 )
-                setactualBboxes(res.data.ocr_data)
+                setactualBboxes( res.data.ocr_data )
                 calculateBboxDimensions(
                     res.data.ocr_data,
                     res.data.metadata.height,
                     res.data.metadata.width
                 )
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, [docId])
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
+    }, [docId] )
 
     // Calculate the dimension of bbox based on the actual image portion visible on the screen
     const calculateBboxDimensions = (
@@ -98,125 +94,120 @@ function AnnotationPage(props) {
         const heightratio = imageRef.current.height / _height
         setBboxes(
             bboxData
-                .map((bbox, index) => [
+                .map( ( bbox, index ) => [
                     bbox[0] * widthratio +
-                        imageRef.current.offsetLeft -
-                        scrollLeft,
+                    imageRef.current.offsetLeft -
+                    scrollLeft,
                     bbox[1] * heightratio +
-                        imageRef.current.offsetTop -
-                        scrollTop,
+                    imageRef.current.offsetTop -
+                    scrollTop,
                     bbox[2] * widthratio,
                     bbox[3] * heightratio,
                     bbox[4],
                     bbox[5],
-                ])
-                .filter((bbox, index) => {
+                ] )
+                .filter( ( bbox, index ) => {
                     return (
                         bbox[1] >= imgContainerRef.current.offsetTop &&
                         bbox[1] + bbox[3] <=
-                            imgContainerRef.current.clientHeight +
-                                imgContainerRef.current.offsetTop &&
+                        imgContainerRef.current.clientHeight +
+                        imgContainerRef.current.offsetTop &&
                         bbox[0] >= imgContainerRef.current.offsetLeft &&
                         bbox[0] + bbox[2] <=
-                            imgContainerRef.current.clientWidth +
-                                imgContainerRef.current.offsetLeft
+                        imgContainerRef.current.clientWidth +
+                        imgContainerRef.current.offsetLeft
                     )
-                })
+                } )
         )
     }
 
     /**
      * Handling of the annotation portion
      */
-
     // sets the active/current field's value if the user clicks on the bbox
-    const handleBboxClick = (event, bbox, index) => {
-        if (annotationStatus) return
-        if (event.ctrlKey) {
+    const handleBboxClick = ( event, bbox, index ) => {
+        if ( annotationStatus ) return
+        if ( event.ctrlKey ) {
             fields[currentField]['value'] =
                 fields[currentField]['value'] + ' ' + bbox[4]
-            fields[currentField]['word_ids'].push(bbox[5])
-            setFields([...fields])
+            fields[currentField]['word_ids'].push( bbox[5] )
+            setFields( [...fields] )
         } else {
             fields[currentField]['value'] = bbox[4]
             fields[currentField]['word_ids'] = [bbox[5]]
-            setFields([...fields])
+            setFields( [...fields] )
         }
     }
 
     // handles the double click event on the image to set initial coordinates of the annotation box
-    const handleImageClick = (event) => {
-        if (event.detail == 2) {
-            if (annotationStatus) return
-            setIsDrawing(true)
-            console.log('Inside the double click')
+    const handleImageClick = ( event ) => {
+        if ( event.detail == 2 ) {
+            if ( annotationStatus ) return
+            setIsDrawing( true )
             // sets the starting and ending coordinates of the mouse pointer relative to the top-left
             // corner of a specific element when a mouse movement event is triggered.
-
-            setOrigStartX(event.clientX + window.scrollX)
-            setOrigStartY(event.clientY + window.scrollY)
-            setOrigEndX(event.clientX + window.scrollX)
-            setOrigEndY(event.clientY + window.scrollY)
+            setOrigStartX( event.clientX + window.scrollX )
+            setOrigStartY( event.clientY + window.scrollY )
+            setOrigEndX( event.clientX + window.scrollX )
+            setOrigEndY( event.clientY + window.scrollY )
         }
     }
     // Sets the end position of the annotation box when the mouse is moved
-    const handleMouseMove = (event) => {
-        if (!isDrawing) {
+    const handleMouseMove = ( event ) => {
+        if ( !isDrawing ) {
             return
         }
         const boundingRect = event.target.getBoundingClientRect()
-        setOrigEndX(event.clientX + window.scrollX)
-        setOrigEndY(event.clientY + window.scrollY)
+        setOrigEndX( event.clientX + window.scrollX )
+        setOrigEndY( event.clientY + window.scrollY )
     }
 
     // Sets the value of the current field when the mouse is released
-    const handleMouseDown = (event) => {
-        console.log('Inside the mouse down')
-        if (isDrawing) {
+    const handleMouseDown = ( event ) => {
+        if ( isDrawing ) {
             const temp = fileteredBboxes()
             fields[currentField]['value'] = ''
             fields[currentField]['word_ids'] = []
-            for (let i = 0; i < temp.length; i++) {
+            for ( let i = 0; i < temp.length; i++ ) {
                 fields[currentField]['value'] =
                     fields[currentField]['value'] + ' ' + temp[i][4]
-                fields[currentField]['word_ids'].push(temp[i][5])
+                fields[currentField]['word_ids'].push( temp[i][5] )
             }
-            setFields([...fields])
+            setFields( [...fields] )
         }
-        setIsDrawing(false)
+        setIsDrawing( false )
     }
 
     // Filters the bboxes that are inside the annotation box
     const fileteredBboxes = () => {
-        return bboxes.filter(([left, top, width, height, text, id], index) => {
+        return bboxes.filter( ( [left, top, width, height, text, id], index ) => {
             const right = left + width
             const bottom = top + height
             // Check if the bounding box lies inside rectangle
             return (
-                left >= Math.min(origstartX, origendX) &&
-                right <= Math.max(origstartX, origendX) &&
-                top >= Math.min(origstartY, origendY) &&
-                bottom <= Math.max(origstartY, origendY)
+                left >= Math.min( origstartX, origendX ) &&
+                right <= Math.max( origstartX, origendX ) &&
+                top >= Math.min( origstartY, origendY ) &&
+                bottom <= Math.max( origstartY, origendY )
             )
-        })
+        } )
     }
 
     /**
      * Handling of the changes in image display: image zoom, image scroll, window scroll, window resize
      */
-
     // Handles the zoom event on the image
-    useEffect(() => {
-        calculateBboxDimensions(actualBboxes, height, width)
-    }, [zoom])
+    useEffect( () => {
+        calculateBboxDimensions( actualBboxes, height, width )
+    }, [zoom] )
 
     // Handles the window resize event
     window.onresize = () => {
-        calculateBboxDimensions(actualBboxes, height, width)
+        calculateBboxDimensions( actualBboxes, height, width )
     }
 
     // Handles the scroll event on the image
-    const handleScrollEvent = (event) => {
+    const handleScrollEvent = ( event ) => {
         calculateBboxDimensions(
             actualBboxes,
             height,
@@ -231,19 +222,19 @@ function AnnotationPage(props) {
         position: 'absolute',
         border: '1px solid black',
         backgroundColor: 'transparent',
-        left: `${Math.min(origstartX, origendX)}px`,
-        top: `${Math.min(origstartY, origendY)}px`,
-        width: `${Math.abs(origendX - origstartX)}px`,
-        height: `${Math.abs(origendY - origstartY)}px`,
+        left: `${Math.min( origstartX, origendX )}px`,
+        top: `${Math.min( origstartY, origendY )}px`,
+        width: `${Math.abs( origendX - origstartX )}px`,
+        height: `${Math.abs( origendY - origstartY )}px`,
     }
 
     /**
      * Saves the current annotation and navigates to the next document
      */
-    const handleAnnotationSave = (event) => {
+    const handleAnnotationSave = ( event ) => {
         axios
             .post(
-                `${BASE_URL}/annotate/${docId}`,
+                `${process.env.REACT_APP_BACKEND}/annotate/${docId}`,
                 { annotations: { annotation: fields }, metadata: metadata },
                 {
                     headers: {
@@ -252,52 +243,54 @@ function AnnotationPage(props) {
                 },
                 { withCredentials: true }
             )
-            .then((res) => {
+            .then( ( res ) => {
                 navigate(
-                    `/annotate/${
-                        documentList[
-                            Math.min(
-                                currentDocumentIndex + 1,
-                                documentList.length - 1
-                            )
-                        ]['image_id']
+                    `/annotate/${documentList[
+                    Math.min(
+                        currentDocumentIndex + 1,
+                        documentList.length - 1
+                    )
+                    ]['image_id']
                     }`,
                     {
                         state: { documents: documentList },
                     }
                 )
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
     }
 
     /**
      * Handles the change in the status of the annotation
      *  */
-    const handleStatusChange = (e) => {
+    const handleStatusChange = ( e ) => {
         e.preventDefault()
         metadata['status'] =
             metadata['status'] === 'Processed.' ? 'reviewing' : 'Processed.'
-        setAnnotationStatus(metadata['status'] === 'Processed.')
-        setMetadata(metadata)
+        setAnnotationStatus( metadata['status'] === 'Processed.' )
+        setMetadata( metadata )
     }
 
-    const handleExit = (e) => {
+    const handleExit = ( e ) => {
         e.preventDefault()
-        navigate(`/dashboard`)
+        navigate( `/dashboard` )
     }
 
     return (
         <div class="mt-8 pb-24 dark:bg-gray-800">
+            <DownloadModal
+                isOpen={isOpen}
+                onCloseModal={( event ) => setIsOpen( false )}
+                docId={docId}
+            />
             <div class="fixed z-20 bottom-0  left-0 pt-6 px-4 flex-shrink-0  w-550 mt-200 border border-gray-200 shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <div class="flex flex-grow justify-start">
-                    <a
-                        href={`${BASE_URL}/annotate/download/json/${docId}`}
-                        download
-                    >
-                        <TButton label="Download"></TButton>
-                    </a>
+                    <TButton
+                        label="Download"
+                        onClick={( event ) => setIsOpen( true )}
+                    ></TButton>
                     <div>
                         <TButton
                             onClick={handleStatusChange}
@@ -317,11 +310,10 @@ function AnnotationPage(props) {
                     {documentList && (
                         <Link
                             class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                            to={`/annotate/${
-                                documentList[
-                                    Math.max(currentDocumentIndex - 1, 0)
-                                ]['image_id']
-                            }`}
+                            to={`/annotate/${documentList[
+                                Math.max( currentDocumentIndex - 1, 0 )
+                            ]['image_id']
+                                }`}
                             state={{ documents: documentList }}
                         >
                             <svg
@@ -345,14 +337,13 @@ function AnnotationPage(props) {
                     {documentList && (
                         <Link
                             class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                            to={`/annotate/${
-                                documentList[
-                                    Math.min(
-                                        currentDocumentIndex + 1,
-                                        documentList.length - 1
-                                    )
-                                ]['image_id']
-                            }`}
+                            to={`/annotate/${documentList[
+                                Math.min(
+                                    currentDocumentIndex + 1,
+                                    documentList.length - 1
+                                )
+                            ]['image_id']
+                                }`}
                             state={{ documents: documentList }}
                         >
                             <svg
@@ -381,7 +372,7 @@ function AnnotationPage(props) {
                     max="200"
                     step="10"
                     value={zoom}
-                    onChange={handleZoomChange}
+                    onChange={( event ) => setZoom( event.target.value )}
                 />
                 <svg
                     class="ml-2 mr-1 w-8 h-8 hover:cursor-pointer"
@@ -403,16 +394,16 @@ function AnnotationPage(props) {
                 {/* This div component contains all the fields to be annotated for the document type */}
                 <div class="flex flex-col overflow-y-scroll scrollbar-hide ">
                     {fields &&
-                        fields.map((field, index) => (
+                        fields.map( ( field, index ) => (
                             <div key={index}>
                                 <JsonSpanElement
                                     index={index}
                                     label={field['name']}
-                                    handleRef={handleFieldRef}
+                                    handleRef={( event, index ) => setCurrentField( index )}
                                     value={field['value']}
                                 />
                             </div>
-                        ))}
+                        ) )}
                 </div>
 
                 {/* This component contains all the features for annotation */}
@@ -436,7 +427,7 @@ function AnnotationPage(props) {
                                 }}
                                 onMouseDown={handleMouseDown}
                                 onMouseMove={handleMouseMove}
-                                onClick={(event) => handleImageClick(event)}
+                                onClick={( event ) => handleImageClick( event )}
                             />
                         )}
                         {isDrawing && <div style={rectStyle}></div>}
@@ -444,13 +435,13 @@ function AnnotationPage(props) {
                         {/* This component is responsible for displaying the bounding boxes of the texts */}
                         <div className="bboxes">
                             {bboxes &&
-                                bboxes.map((bbox, index) => {
-                                    if (bbox[4].trim().length > 0) {
+                                bboxes.map( ( bbox, index ) => {
+                                    if ( bbox[4].trim().length > 0 ) {
                                         return (
                                             <div
                                                 key={index}
                                                 id={index}
-                                                onClick={(event) =>
+                                                onClick={( event ) =>
                                                     handleBboxClick(
                                                         event,
                                                         bbox,
@@ -467,7 +458,7 @@ function AnnotationPage(props) {
                                             ></div>
                                         )
                                     }
-                                })}
+                                } )}
                         </div>
                     </div>
                 </div>

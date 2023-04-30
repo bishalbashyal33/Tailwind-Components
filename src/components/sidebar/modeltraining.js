@@ -1,52 +1,42 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import Th from './thcomponent'
 import { Link } from 'react-router-dom'
 import TButton from '../tbutton'
-import TrainModal from '../TrainModal'
-import BASE_URL from '../../backend'
+import TrainModal from '../modals/TrainModal'
 
-function ModelTraining(props) {
-    const [models, setModels] = useState([])
-    const [selected, setSelected] = useState([])
+function ModelTraining ( props ) {
+    const [models, setModels] = useState( [] )
+    const [selected, setSelected] = useState( [] )
 
-    const handleCheckClick = (event, model_id) => {
-        console.log('Handled check click')
-        console.log(selected)
+    const handleCheckClick = ( event, model_id ) => {
+        console.log( 'Handled check click' )
+        console.log( selected )
 
-        if (event.target.checked) {
-            setSelected([...selected, model_id])
+        if ( event.target.checked ) {
+            setSelected( [...selected, model_id] )
         } else {
-            setSelected(selected.filter((item) => item !== model_id))
+            setSelected( selected.filter( ( item ) => item !== model_id ) )
         }
     }
 
-    useEffect(() => {
-        console.log('Fetching the model data')
+    useEffect( () => {
+        console.log( 'Fetching the model data' )
         axios
-            .get(`${BASE_URL}/predict/`, { withCredentials: true })
-            .then((res) => {
-                console.log(res.data)
-                setModels(res.data.models)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, [])
+            .get( `${process.env.REACT_APP_BACKEND}/predict/`, { withCredentials: true } )
+            .then( ( res ) => {
+                console.log( res.data )
+                setModels( res.data.models )
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
+    }, [] )
 
-    const handleAllChecks = (event) => {
-        console.log('Handled checks')
-        // if (event.target.checked) {
-        //     setSelected(().map((doc) => doc.id))
-        // } else {
-        //     setSelected([])
-        // }
-    }
-    const handleDelete = (event) => {
-        console.log('Selected Elements: ', selected)
+    const handleDelete = ( event ) => {
+        console.log( 'Selected Elements: ', selected )
         axios
             .post(
-                `${BASE_URL}/train/delete_multiple`,
+                `${process.env.REACT_APP_BACKEND}/train/delete_multiple`,
                 selected,
                 {
                     headers: {
@@ -55,35 +45,37 @@ function ModelTraining(props) {
                 },
                 { withCredentials: true }
             )
-            .then((res) => {
-                setSelected(res.data.success)
-                setModels((prev) =>
-                    prev.filter((model) => !res.data.success.includes(model.id))
+            .then( ( res ) => {
+                setSelected( res.data.success )
+                setModels( ( prev ) =>
+                    prev.filter( ( model ) => !res.data.success.includes( model.id ) )
                 )
-                console.log('Successfully deleted ', res.data.success)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+                console.log( 'Successfully deleted ', res.data.success )
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
     }
 
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState( false )
 
-    function handleOpenModal() {
-        setIsOpen(true)
+    function handleOpenModal () {
+        setIsOpen( true )
     }
 
-    function handleCloseModal() {
-        setIsOpen(false)
+    function handleCloseModal () {
+        setIsOpen( false )
     }
-    console.log('Inside the model training component')
+    console.log( 'Inside the model training component' )
     return (
         <div class="p-4 sm:ml-64">
-            <TrainModal
-                isOpen={isOpen}
-                onCloseModal={handleCloseModal}
-                setModels={setModels}
-            />
+            {isOpen && (
+                <TrainModal
+                    isOpen={isOpen}
+                    onCloseModal={handleCloseModal}
+                    setModels={setModels}
+                />
+            )}
 
             <div class="p-4 border-2 text-white border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-8">
                 {
@@ -159,7 +151,7 @@ function ModelTraining(props) {
                             </thead>
                             <tbody>
                                 {models &&
-                                    models.map((model) => (
+                                    models.map( ( model ) => (
                                         <tr
                                             key={model['id']}
                                             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -168,7 +160,7 @@ function ModelTraining(props) {
                                                 <div class="flex items-center">
                                                     <input
                                                         key={model['id']}
-                                                        onClick={(e) =>
+                                                        onClick={( e ) =>
                                                             handleCheckClick(
                                                                 e,
                                                                 model['id']
@@ -192,7 +184,7 @@ function ModelTraining(props) {
                                             >
                                                 <Link
                                                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                    to={`/dashboard`}
+                                                    to={`/dashboard/model/${model['id']}`}
                                                 >
                                                     {model['id']}
                                                 </Link>
@@ -209,55 +201,13 @@ function ModelTraining(props) {
                                                         model['created_at']
                                                     )
                                                         .toISOString()
-                                                        .split('T')[0]
+                                                        .split( 'T' )[0]
                                                 }
                                             </td>
                                             <td class="px-6 py-4">{0.86}</td>
                                         </tr>
-                                    ))}
+                                    ) )}
                                 {!models && <h1>Train a new Model</h1>}
-                                {/* <Th
-                                    docname="HuggingFace"
-                                    docuploadedby="GPT"
-                                    doctype="91%"
-                                    docstatus="0.2"
-                                    docaction="0.75"
-                                />
-                                <Th
-                                    docname="HuggingFace"
-                                    docuploadedby="GPT"
-                                    doctype="91%"
-                                    docstatus="0.2"
-                                    docaction="0.75"
-                                />
-                                <Th
-                                    docname="HuggingFace"
-                                    docuploadedby="GPT"
-                                    doctype="91%"
-                                    docstatus="0.2"
-                                    docaction="0.75"
-                                />
-                                <Th
-                                    docname="HuggingFace"
-                                    docuploadedby="GPT"
-                                    doctype="91%"
-                                    docstatus="0.2"
-                                    docaction="0.75"
-                                />
-                                <Th
-                                    docname="HuggingFace"
-                                    docuploadedby="GPT"
-                                    doctype="91%"
-                                    docstatus="0.2"
-                                    docaction="0.75"
-                                />
-                                <Th
-                                    docname="HuggingFace"
-                                    docuploadedby="GPT"
-                                    doctype="91%"
-                                    docstatus="0.2"
-                                    docaction="0.75"
-                                /> */}
                             </tbody>
                         </table>
                     </div>

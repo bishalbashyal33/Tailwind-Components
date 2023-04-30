@@ -1,91 +1,111 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import MyButton from '../components/button'
-import TButton from '../components/tbutton'
+import axios from 'axios'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useLocation } from 'react-router-dom'
+
 import DDButton from '../components/dashboardcomponents/dropdownbutton'
 import UPopup from '../components/uploadpopup'
 import MyDocuments from '../components/sidebar/mydocuments'
 import DocumentTypes from '../components/sidebar/documenttypes'
 import APIService from '../components/sidebar/apiservices'
 import ModelTraining from '../components/sidebar/modeltraining'
+import ModelReport from '../components/ModelReport'
 import Settings from '../components/sidebar/settings'
-import SettingPopup from '../components/settingpopup'
-import TrainPopup from '../components/trainpopup'
-import axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../reducers/loginReducer'
-import BASE_URL from '../backend'
 
-function DashBoard(props) {
-    console.log('Inside dashboard')
-    const { user_id, session_id } = useSelector((state) => state.auth)
-    // const [activeTab, setActiveTab] = useState('DocumentType')
-    const [activeTab, setActiveTab] = useState('Model&Training')
+function DashBoard () {
+    const location = useLocation()
     const navigate = useNavigate()
+    const [pathname, setPathname] = useState( location.pathname )
+    const [activeTab, setActiveTab] = useState( 'DocumentType' )
     const dispatch = useDispatch()
-    const { username, email } = useSelector((state) => state.auth)
-    const [docTypes, setDocTypes] = useState([])
-    const [selectedDocType, setSelectedDocType] = useState(null)
+    const { username, email } = useSelector( ( state ) => state.auth )
+    const [docTypes, setDocTypes] = useState( [] )
+    const [selectedDocType, setSelectedDocType] = useState( null )
 
-    const handleTabClick = (tab) => {
-        var prevTab = document.getElementById(activeTab)
-        if (prevTab) prevTab.classList.remove('dark:bg-gray-700')
-        setActiveTab(tab)
-
-        var element = document.getElementById(tab)
-
-        element.classList.add('dark:bg-gray-700')
+    const updateDocTypes = ( _docTypes ) => {
+        setDocTypes( _docTypes )
     }
 
-    useEffect(() => {
+    const handleTabClick = ( tab ) => {
+        var prevTab = document.getElementById( activeTab )
+        if ( prevTab ) prevTab.classList.remove( 'dark:bg-gray-700' )
+        console.log( "prevTab: ", prevTab, "\nNew tab: ", tab )
+
+        setActiveTab( tab )
+        navigate( `/dashboard` )
+        const element = document.getElementById( tab )
+        element.classList.add( 'dark:bg-gray-700' )
+    }
+
+    useEffect( () => {
         // Get all the document types
-        axios(`${BASE_URL}/doc_type/get_all/`, {
+        console.log( 'dashboard: Fetching all the document types' )
+        axios( `${process.env.REACT_APP_BACKEND}/doc_type/get_all/`, {
             method: 'GET',
             withCredentials: true,
-        })
-            .then((res) => {
-                console.log(res)
-                setDocTypes(res.data)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, [])
+        } )
+            .then( ( res ) => {
+                console.log( res )
+                setDocTypes( res.data )
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
+    }, [] )
+
+    useEffect( () => {
+        console.log( 'dashboard: useEffect called', location.pathname )
+        setPathname( location.pathname )
+    }
+        , [location.pathname] )
 
     const renderPageContent = () => {
-        switch (activeTab) {
+        switch ( activeTab ) {
             case 'DocumentType':
-                return <DocumentTypes />
+                console.log( 'DocumentType' )
+                return (
+                    <DocumentTypes
+                        docTypes={docTypes}
+                        updateDocTypes={updateDocTypes}
+                    />
+                )
             case 'MyDocuments':
+                console.log( 'MyDocuments' )
                 return <MyDocuments />
-            // add cases for other tabs
             case 'Model&Training':
+                console.log( 'Model&Training' )
                 return <ModelTraining />
             case 'API&Services':
+                console.log( 'API&Services' )
                 return <APIService />
             case 'Settings':
+                console.log( 'Settings' )
                 return <Settings />
             default:
+                console.log( 'DocumentType' )
                 return <DocumentTypes />
         }
     }
 
-    const handleSignout = async (e) => {
-        console.log('sign out')
-        dispatch(logout())
-        navigate('/')
+    const handleSignout = async ( e ) => {
+        console.log( 'sign out' )
+        dispatch( logout() )
+        navigate( '/' )
     }
     return (
         <div class="container min-h-screen">
+            {/* Popup Component for file upload */}
             <UPopup
                 selectedDocType={selectedDocType}
                 setSelectedDocType={setSelectedDocType}
             />
-            {/* <TrainPopup /> */}
-            {/* <SettingPopup /> */}
+
+            {/* Navbar | Top of the screen */}
             <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                 <div class="px-3 py-3 lg:px-5 lg:pl-3">
                     <div class="flex items-center justify-between">
+                        {/* Logo | Top Left of the screen*/}
                         <div class="flex items-center justify-start">
                             <button
                                 data-drawer-target="logo-sidebar"
@@ -120,6 +140,8 @@ function DashBoard(props) {
                                 </span>
                             </a>
                         </div>
+
+                        {/* User Account Dropdown | Top Right of the screen*/}
                         <div class="flex items-center">
                             <div class="flex items-center ml-3">
                                 <div>
@@ -162,7 +184,7 @@ function DashBoard(props) {
                                             <a
                                                 href="#"
                                                 onClick={() =>
-                                                    handleTabClick('Settings')
+                                                    handleTabClick( 'Settings' )
                                                 }
                                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 role="menuitem"
@@ -187,6 +209,7 @@ function DashBoard(props) {
                 </div>
             </nav>
 
+            {/* Sidebar | Left of the screen */}
             <aside
                 id="logo-sidebar"
                 class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
@@ -204,7 +227,7 @@ function DashBoard(props) {
                             <a
                                 href="#"
                                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                onClick={() => handleTabClick('DocumentTypes')}
+                                onClick={() => handleTabClick( 'DocumentTypes' )}
                                 id="DocumentTypes"
                             >
                                 <svg
@@ -223,7 +246,7 @@ function DashBoard(props) {
                         <li>
                             <a
                                 href="#"
-                                onClick={() => handleTabClick('MyDocuments')}
+                                onClick={() => handleTabClick( 'MyDocuments' )}
                                 id="MyDocuments"
                                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
@@ -239,15 +262,12 @@ function DashBoard(props) {
                                 <span class="flex-1 ml-3 whitespace-nowrap">
                                     My Documents
                                 </span>
-                                <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                                    Pro
-                                </span>
                             </a>
                         </li>
                         <li>
                             <a
                                 href="#"
-                                onClick={() => handleTabClick('Model&Training')}
+                                onClick={() => handleTabClick( 'Model&Training' )}
                                 id="Model&Training"
                                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
@@ -264,15 +284,12 @@ function DashBoard(props) {
                                 <span class="flex-1 ml-3 whitespace-nowrap">
                                     Model & Training
                                 </span>
-                                <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                                    3
-                                </span>
                             </a>
                         </li>
                         <li>
                             <a
                                 href="#"
-                                onClick={() => handleTabClick('API&Services')}
+                                onClick={() => handleTabClick( 'API&Services' )}
                                 id="API&Services"
                                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
@@ -297,7 +314,7 @@ function DashBoard(props) {
                         <li>
                             <a
                                 href="#"
-                                onClick={() => handleTabClick('Settings')}
+                                onClick={() => handleTabClick( 'Settings' )}
                                 id="Settings"
                                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                             >
@@ -345,7 +362,9 @@ function DashBoard(props) {
                     </ul>
                 </div>
             </aside>
-            <div>{renderPageContent()}</div>
+            {pathname.startsWith( "/dashboard/model" ) && <ModelReport />}
+            {( pathname === "/dashboard" || pathname === "/dashboard/" ) && <div>{renderPageContent()}</div>}
+
         </div>
     )
 }

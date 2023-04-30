@@ -1,56 +1,53 @@
 import React, { useState } from 'react'
 import { saveAs } from 'file-saver'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import axios from 'axios'
-import BASE_URL from '../backend'
 
-function UPopup(props) {
-    const [file, setFile] = useState(null)
+function UPopup ( props ) {
+    const [file, setFile] = useState( null )
+    // const notify = () => ( toastId.current = toast( 'Lorem ipsum dolor' ) )
+    // const toastId = React.useRef( null )
+    // const openToast = () => {
+    //     console.log( 'Toast clicked' )
+
+    // }
     const handleFileSelect = () => {
-        const fileInput = document.createElement('input')
-        fileInput.setAttribute('type', 'file')
-        fileInput.setAttribute('accept', 'image/*')
-        fileInput.setAttribute('multiple', true)
-        const image = document.getElementById('selected-image')
+        const fileInput = document.createElement( 'input' )
+        fileInput.setAttribute( 'type', 'file' )
+        fileInput.setAttribute( 'accept', 'image/*' )
+        fileInput.setAttribute( 'multiple', true )
+        const image = document.getElementById( 'selected-image' )
 
         // Add an event listener for when a file is selected
-        fileInput.addEventListener('change', (event) => {
+        fileInput.addEventListener( 'change', ( event ) => {
             const temp_file = event.target.files[0]
-            setFile(event.target.files)
+            setFile( event.target.files )
             const reader = new FileReader()
 
             // Add an event listener for when the file is loaded
-            reader.addEventListener('load', () => {
+            reader.addEventListener( 'load', () => {
                 image.src = reader.result
-            })
+            } )
 
             // Load the selected file
-            reader.readAsDataURL(temp_file)
-        })
+            reader.readAsDataURL( temp_file )
+        } )
 
         // Trigger a click event on the file input element
         fileInput.click()
     }
 
-    const handleUpload = async (event) => {
-        console.log('Clicked upload button')
-        console.log(file)
+    const handleUpload = async ( event ) => {
+        console.log( 'Clicked upload button' )
+        console.log( file )
         event.preventDefault()
 
-        // if (file) {
-        //     const selectedImage = document.getElementById('selected-image');
-        //     const reader = new FileReader();
-        //     reader.readAsDataURL(file);
-
-        //     selectedImage.setAttribute('src',reader.result);
-        // }
-        if (file) {
+        if ( file ) {
             // Create a FormData object
-            // const formData = new FormData()
-            // formData.append('files', file)
-
             const formData = new FormData()
-            for (let i = 0; i < file.length; i++) {
-                formData.append('files', file[i])
+            for ( let i = 0; i < file.length; i++ ) {
+                formData.append( 'files', file[i] )
             }
 
             // Send the FormData object as the request body in the POST request
@@ -59,8 +56,8 @@ function UPopup(props) {
                 file,
                 props.selectedDocType
             )
-            const response = await axios.post(
-                `${BASE_URL}/annotation/post/multiple/${props.selectedDocType}`,
+            const response = axios.post(
+                `${process.env.REACT_APP_BACKEND}/annotation/post/multiple/${props.selectedDocType}`,
                 formData,
                 {
                     headers: {
@@ -68,29 +65,26 @@ function UPopup(props) {
                     },
                 }
             )
-            // const response = await axios.post(
-            //     `${BASE_URL}/annotation/post/multiple/${props.selectedDocType}`,
-            //     formData
-            // )
-            if (response.status == 200) {
-                setFile(null)
-                window.location.href = '/dashboard'
-            }
-            console.log(response)
-            setFile(null)
+            setFile( null )
+            window.location.href = '/dashboard'
+            // if ( response.status == 200 ) {
+            //     return toast( 'Will close after 7s', { autoClose: 3000 } )
+            // }
+            // console.log( response )
+            // setFile( null )
         }
     }
 
-    const handleClose = (event) => {
-        props.setSelectedDocType('')
+    const handleClose = ( event ) => {
+        props.setSelectedDocType( '' )
     }
 
-    function handleOverlayClick(e) {
-        if (e.target.id === 'staticModal') {
-            props.setSelectedDocType('')
+    function handleOverlayClick ( e ) {
+        if ( e.target.id === 'staticModal' ) {
+            props.setSelectedDocType( '' )
         }
     }
-    console.log('Opened dialog for image upload')
+    console.log( 'Opened dialog for image upload' )
     return (
         <div
             id="staticModal"
@@ -98,9 +92,8 @@ function UPopup(props) {
             tabindex="-1"
             onClick={handleOverlayClick}
             aria-hidden="false"
-            class={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${
-                props.selectedDocType ? '' : 'hidden'
-            } :h-full`}
+            class={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${props.selectedDocType ? '' : 'hidden'
+                } :h-full`}
         >
             <div class="relative w-full h-full max-w-2xl md:h-auto">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -136,13 +129,12 @@ function UPopup(props) {
                             id="selected-image"
                             class="h-72 w-full"
                             src="https://silentsystem.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
-                            // alt="image description"
+                            alt="image description"
                         />
                     </div>
 
                     <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                         <button
-                            // data-modal-hide="staticModal"
                             type="button"
                             id="select-image-button"
                             onClick={handleFileSelect}
@@ -151,7 +143,6 @@ function UPopup(props) {
                             Select Image
                         </button>
                         <button
-                            // data-modal-hide="staticModal"
                             type="button"
                             onClick={handleUpload}
                             class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"

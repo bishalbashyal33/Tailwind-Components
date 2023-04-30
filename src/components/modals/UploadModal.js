@@ -1,68 +1,66 @@
 // Modal.js
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
-import BASE_URL from '../backend'
-import DocButton from './DocDropDown'
 
-function UploadModal({ isOpen, onCloseModal, selectedDocType }) {
-    function handleOverlayClick(e) {
-        if (e.target.id === 'modal-overlay') {
-            onCloseModal(false)
+function UploadModal ( { isOpen, onCloseModal, selectedDocType } ) {
+    function handleOverlayClick ( e ) {
+        if ( e.target.id === 'modal-overlay' ) {
+            onCloseModal( false )
         }
     }
 
-    const [file, setFile] = useState(null)
+    const [file, setFile] = useState( null )
     const handleFileSelect = () => {
-        const fileInput = document.createElement('input')
-        fileInput.setAttribute('type', 'file')
-        fileInput.setAttribute('accept', 'image/*')
-        fileInput.setAttribute('multiple', true)
-        const image = document.getElementById('selected-image')
+        const fileInput = document.createElement( 'input' )
+        fileInput.setAttribute( 'type', 'file' )
+        fileInput.setAttribute( 'accept', 'image/*' )
+        fileInput.setAttribute( 'multiple', true )
+        const image = document.getElementById( 'selected-image' )
 
         fileInput.type = 'file'
 
         // Add an event listener for when a file is selected
-        fileInput.addEventListener('change', (event) => {
+        fileInput.addEventListener( 'change', ( event ) => {
             const temp_file = event.target.files[0]
-            setFile(event.target.files)
+            setFile( event.target.files )
             const reader = new FileReader()
 
             // Add an event listener for when the file is loaded
-            reader.addEventListener('load', () => {
+            reader.addEventListener( 'load', () => {
                 image.src = reader.result
-            })
+            } )
 
             // Load the selected file
-            reader.readAsDataURL(temp_file)
-        })
+            reader.readAsDataURL( temp_file )
+        } )
 
         // Trigger a click event on the file input element
         fileInput.click()
     }
 
-    const handleUpload = async (event) => {
-        console.log('Clicked upload button')
-        console.log(file)
+    const handleUpload = async ( event ) => {
+        console.log( 'Clicked upload button' )
+        console.log( file )
         event.preventDefault()
 
-        if (file) {
+        if ( file ) {
             // Create a FormData object
             const formData = new FormData()
-            formData.append('file', file, file.name)
+            formData.append( 'file', file, file.name )
 
             // Send the FormData object as the request body in the POST request
             const response = await axios.post(
-                `${BASE_URL}/annotation/post/${selectedDocType}`,
+                `${process.env.REACT_APP_BACKEND}/annotation/post/${selectedDocType}`,
                 formData
             )
-            if (response.status == 202) {
+            if ( response.status == 202 ) {
                 window.location.href = '/dashboard'
             }
-            console.log(response.data)
+            console.log( response.data )
         }
     }
 
-    if (!isOpen) {
+    if ( !isOpen ) {
         return null
     }
 
@@ -70,11 +68,10 @@ function UploadModal({ isOpen, onCloseModal, selectedDocType }) {
         <div
             id="modal-overlay"
             onClick={handleOverlayClick}
-            className={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${
-                isOpen
+            className={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${isOpen
                     ? 'opacity-100 pointer-events-auto'
                     : 'opacity-0 pointer-events-none'
-            }`}
+                }`}
         >
             <div class="relative w-full h-full max-w-2xl md:h-auto">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -106,7 +103,7 @@ function UploadModal({ isOpen, onCloseModal, selectedDocType }) {
                             id="selected-image"
                             class="h-72 w-full"
                             src="https://silentsystem.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
-                            // alt="image description"
+                        // alt="image description"
                         />
                     </div>
 

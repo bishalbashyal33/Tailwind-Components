@@ -1,49 +1,40 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
-import HeroSection from '../components/herosection'
-import BASE_URL from '../backend'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { userSignup } from '../actions/loginAction'
 
-function SignUp(props) {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [email, setEmail] = useState('')
-    const [passwordError, setPasswordError] = useState(false)
-    const [confirmPassword, setConfirmPassword] = useState('')
+function SignUp () {
+    const [username, setUsername] = useState( '' )
+    const [password, setPassword] = useState( '' )
+    const [email, setEmail] = useState( '' )
+    const [passwordError, setPasswordError] = useState( false )
+    const [confirmPassword, setConfirmPassword] = useState( '' )
     const navigate = useNavigate()
-    const { session_id, loading, error } = useSelector((state) => state.auth)
+    const { session_id, loading, error } = useSelector( ( state ) => state.auth )
     const dispatch = useDispatch()
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value)
-    }
-
-    const handleSubmit = async (event) => {
+    const handleSubmit = async ( event ) => {
         event.preventDefault()
-        if (password !== confirmPassword) {
-            setPasswordError(true)
+        if ( password !== confirmPassword ) {
+            setPasswordError( true )
             return
         }
-
         const userCredentials = {
             email: email,
             password: password,
             userName: username,
         }
-        dispatch(userSignup(userCredentials))
-            .then((res) => {
-                console.log('chek response', res)
-                if (res.payload.success) {
+        dispatch( userSignup( userCredentials ) )
+            .then( ( res ) => {
+                if ( res.payload.success ) {
                     window.location.href = '/login'
                 } else {
                     return
                 }
-            })
-            .catch((err) => {
-                navigate('/signup')
-            })
-        console.log(userCredentials)
+            } )
+            .catch( ( err ) => {
+                navigate( '/signup' )
+            } )
     }
 
     return (
@@ -60,7 +51,7 @@ function SignUp(props) {
                         type="text"
                         id="username"
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={( e ) => setUsername( e.target.value )}
                         class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                         placeholder="name@flowbite.com"
                         required
@@ -77,7 +68,7 @@ function SignUp(props) {
                         type="email"
                         id="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={( e ) => setEmail( e.target.value )}
                         class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                         placeholder="name@flowbite.com"
                         required
@@ -92,7 +83,7 @@ function SignUp(props) {
                     </label>
                     <input
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={( e ) => setPassword( e.target.value )}
                         type="password"
                         id="password"
                         class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -108,7 +99,7 @@ function SignUp(props) {
                     </label>
                     <input
                         value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        onChange={( e ) => setConfirmPassword( e.target.value )}
                         type="password"
                         id="repeat-password"
                         class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"

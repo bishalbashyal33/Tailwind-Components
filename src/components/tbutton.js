@@ -1,6 +1,4 @@
-import React from 'react'
-
-function TButton(props) {
+function TButton ( props ) {
     return (
         <button
             onClick={props['onClick']}

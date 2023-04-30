@@ -1,27 +1,20 @@
-// Modal.js
-
-import UDButton from './udropdown'
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
-import BASE_URL from '../backend'
-import ModelButton from './ModelDropDown'
+import ModalBtn from '../dropdowns/ModelDropDown'
 
-function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
-    console.log(doc_type_details)
-    const [models, setModels] = useState([])
-    const [model_id, setModelId] = useState(doc_type_details?.model || '')
-    const [opendropdown, setOpenDropdown] = useState(false)
+function SettingModal ( { isOpen, onCloseModal, doc_type_details } ) {
+    const [models, setModels] = useState( [] )
+    const [model_id, setModelId] = useState( doc_type_details?.model || '' )
 
-    function handleOverlayClick(e) {
-        if (e.target.id === 'modal-overlay') {
+    function handleOverlayClick ( e ) {
+        if ( e.target.id === 'modal-overlay' ) {
             onCloseModal()
         }
     }
-    const handleModelAssignment = (event) => {
-        console.log('Model assignment started', model_id, doc_type_details.id)
+    const handleModelAssignment = ( event ) => {
         axios
             .post(
-                `${BASE_URL}/doc_type/${doc_type_details.id}/model`,
+                `${process.env.REACT_APP_BACKEND}/doc_type/${doc_type_details.id}/model`,
                 { model_id: model_id },
                 {
                     headers: {
@@ -30,41 +23,40 @@ function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
                 },
                 { withCredentials: true }
             )
-            .then((response) => {
-                console.log('Request successful', response.data)
-            })
-            .catch(function (response) {
-                console.log(response)
-            })
+            .then( ( response ) => {
+                console.log( 'Request successful', response.data )
+            } )
+            .catch( function ( response ) {
+                console.log( response )
+            } )
         onCloseModal()
-        window.location.href('/dashboard')
+        window.location.href( '/dashboard' )
     }
-    useEffect(() => {
-        console.log('inside axios')
+    useEffect( () => {
         // Get all the document types
-        axios(`${BASE_URL}/predict/`, {
+        axios( `${process.env.REACT_APP_BACKEND}/predict/`, {
             method: 'GET',
             withCredentials: true,
-        })
-            .then((res) => {
-                console.log(res)
-                setModels(res.data.models)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, [])
-    if (!isOpen) return null
+        } )
+            .then( ( res ) => {
+                console.log( res )
+                setModels( res.data.models )
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
+    }, [] )
+
+    if ( !isOpen ) return null
 
     return (
         <div
             id="modal-overlay"
             onClick={handleOverlayClick}
-            className={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${
-                isOpen
-                    ? 'opacity-100 pointer-events-auto'
-                    : 'opacity-0 pointer-events-none'
-            }`}
+            className={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${isOpen
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none'
+                }`}
         >
             <div class="relative w-full h-full max-w-2xl md:h-auto">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -99,10 +91,7 @@ function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
                             </span>
                         </div>
                         <div class="ml-2 flex flex-1 justify-start">
-                            <ModelButton
-                                label="Select Model"
-                                opendropdown={opendropdown}
-                                setOpenDropdown={setOpenDropdown}
+                            <ModalBtn
                                 models={models}
                                 setModelId={setModelId}
                                 model={model_id}
@@ -110,7 +99,7 @@ function SettingModal({ isOpen, onCloseModal, doc_type_details }) {
                         </div>
                     </div>
 
-                    <div class="pl-6 flex justify-start">
+                    <div class="pl-6 flex justify-start mb-6">
                         <div class="flex flex-col justify-center">
                             <span class="  text-gray-900 dark:text-white">
                                 Task Type:

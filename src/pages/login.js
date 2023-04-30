@@ -1,52 +1,38 @@
-import React, { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
-import axios from 'axios'
-import HeroSection from '../components/herosection'
-import BASE_URL from '../backend'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { userLogin } from '../actions/loginAction'
 
-export const noteApi = axios.create({
-    baseURL: BASE_URL,
-    withCredentials: true,
-})
-
-noteApi.defaults.headers.common['Content-Type'] = 'application/json'
-
-function LogIn(props) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+function LogIn () {
+    const [email, setEmail] = useState( '' )
+    const [password, setPassword] = useState( '' )
     const navigate = useNavigate()
-    const { session_id, loading, error } = useSelector((state) => state.auth)
+    const { session_id, loading, error } = useSelector( ( state ) => state.auth )
     const dispatch = useDispatch()
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value)
+    const handleEmailChange = ( event ) => {
+        setEmail( event.target.value )
     }
 
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value)
+    const handlePasswordChange = ( event ) => {
+        setPassword( event.target.value )
     }
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async ( event ) => {
         event.preventDefault()
-
         const userCredentials = {
             email: email,
             password: password,
         }
 
-        console.log(userCredentials)
-        dispatch(userLogin(userCredentials))
-            .then((res) => {
+        console.log( userCredentials )
+        dispatch( userLogin( userCredentials ) )
+            .then( ( res ) => {
                 window.location.href = '/dashboard'
-            })
-            .catch((err) => {
-                navigate('/login')
-            })
-        console.log('after login')
-        console.log(loading)
-        console.log('after navigation to dashboard')
+            } )
+            .catch( ( err ) => {
+                navigate( '/login' )
+            } )
     }
 
     return (
@@ -83,12 +69,6 @@ function LogIn(props) {
                         onChange={handlePasswordChange}
                     />
                 </div>
-                {/* <div class="flex items-start mb-6">
-    <div class="flex items-center h-5">
-      <input id="remember" type="checkbox" value="" class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required/>
-    </div>
-    <label for="remember" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
-  </div> */}
                 <button
                     onClick={handleSubmit}
                     type="submit"

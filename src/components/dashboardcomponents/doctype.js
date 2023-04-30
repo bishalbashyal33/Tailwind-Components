@@ -1,53 +1,51 @@
 import React, { useState } from 'react'
 import TButton from '../tbutton'
-import BASE_URL from '../../backend'
-import SettingPopup from '../settingpopup'
 import axios from 'axios'
-import SettingModal from '../SettingModal'
+import SettingModal from '../modals/SettingModal'
 
-function DocType(props) {
-    const [isOpen, setIsOpen] = useState(false)
+function DocType ( props ) {
+    const [isOpen, setIsOpen] = useState( false )
 
-    const handleDocumentDelete = (event) => {
+    const handleDocumentDelete = ( event ) => {
         event.preventDefault()
         console.log(
             'Document Delete Request Sent for document id: ',
             props['doc']['id']
         )
-        props.setDocTypes((prevDocuments) =>
-            prevDocuments.filter((doc) => doc.id !== props['doc']['id'])
-        )
-        console.log('Document Deleted Successfully', props['doc']['id'])
+        props.handleDocTypeDelete( props['doc']['id'] )
+        console.log( 'Document Deleted Successfully', props['doc']['id'] )
 
         axios
-            .post(`${BASE_URL}/doc_type/delete/${props['doc']['id']}`, {
+            .post( `${process.env.REACT_APP_BACKEND}/doc_type/delete/${props['doc']['id']}`, {
                 withCredentials: true,
-            })
-            .then((res) => {
-                console.log('Successfully deleted ', res.data.success)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+            } )
+            .then( ( res ) => {
+                console.log( 'Successfully deleted ', res.data.success )
+            } )
+            .catch( ( err ) => {
+                console.log( err )
+            } )
     }
-    const handleClick = (event) => {
+    const handleClick = ( event ) => {
         window.location.href = `annotate/${props['doc']['id']}`
     }
 
-    function handleOpenModal() {
-        setIsOpen(true)
+    function handleOpenModal () {
+        setIsOpen( true )
     }
 
-    function handleCloseModal() {
-        setIsOpen(false)
+    function handleCloseModal () {
+        setIsOpen( false )
     }
     return (
         <div class="m-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-            <SettingModal
-                isOpen={isOpen}
-                onCloseModal={handleCloseModal}
-                doc_type_details={props.doc}
-            />
+            {isOpen && (
+                <SettingModal
+                    isOpen={isOpen}
+                    onCloseModal={handleCloseModal}
+                    doc_type_details={props.doc}
+                />
+            )}
 
             <div class="flex">
                 <div class="flex justify-start">
