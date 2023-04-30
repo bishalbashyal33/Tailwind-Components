@@ -1,9 +1,29 @@
-import React from 'react'
+import { useState } from 'react'
 import TButton from '../tbutton'
+import ServiceModal from '../modals/ServiceModal'
 
-function SerType(props) {
+function SerType ( props ) {
+    const [isOpen, setIsOpen] = useState( false )
+    const [apiDetail, setApi] = useState( props.apiDetail )
+
+    function handleOpenModal () {
+        setIsOpen( true )
+    }
+
+    function handleCloseModal () {
+        setIsOpen( false )
+    }
     return (
         <div class="block max-w-sm mx-2 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            {isOpen && (
+                <ServiceModal
+                    isOpen={isOpen}
+                    onCloseModal={handleCloseModal}
+                    header={apiDetail.header}
+                    serviceName={props.serviceName}
+                    serviceDetail={apiDetail.detail}
+                />
+            )}
             <div class="flex">
                 <div class="flex justify-start">
                     <span class="mb-2  dark:text-white">API</span>
@@ -48,6 +68,7 @@ function SerType(props) {
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                         aria-hidden="true"
+                        onClick={( event ) => handleOpenModal( "Your Extracted Json are stored in the URL", )}
                     >
                         <path
                             stroke-linecap="round"
@@ -64,14 +85,15 @@ function SerType(props) {
             </div>
 
             <div class="flex justify-center py-8">
-                <img class="h-6 w-6 mr-1 mt-1" src={props.img}></img>
+                <img class="h-6 w-6 mr-1 mt-1" src={props.apiDetail.img}></img>
                 <h3 class="mb-2 tracking-tight font-medium text-xl text-gray-900 dark:text-gray-200">
-                    {props.apiname}
+                    {props.serviceName}
                 </h3>
             </div>
 
             <div class="flex justify-center">
-                <TButton label="Connect"></TButton>
+                {!apiDetail.status && <TButton label="Connect" onClick={() => props.handleServiceStatus( props.serviceName )}></TButton>}
+                {apiDetail.status && <TButton label="Disconnect" onClick={() => props.handleServiceStatus( props.serviceName )}></TButton>}
             </div>
         </div>
     )

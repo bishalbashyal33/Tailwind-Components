@@ -198,13 +198,15 @@ function ModelTraining ( props ) {
                                             <td class="px-6 py-4">
                                                 {
                                                     new Date(
-                                                        model['created_at']
+                                                        model['created_at'] * 1000
                                                     )
                                                         .toISOString()
                                                         .split( 'T' )[0]
                                                 }
                                             </td>
-                                            <td class="px-6 py-4">{0.86}</td>
+                                            {model["status"] && model["status"] === "running" && <td class="px-6 py-4">Training: {model["trained_epoch"] || 1} of {model["epochs"]}</td>}
+                                            {( !model["status"] || model["status"] === "completed" ) && <td class="px-6 py-4">{model["accuracy"]["f1-score"] || 0.90}</td>}
+
                                         </tr>
                                     ) )}
                                 {!models && <h1>Train a new Model</h1>}
