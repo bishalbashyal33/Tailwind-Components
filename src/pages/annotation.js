@@ -21,7 +21,6 @@ function AnnotationPage () {
         `${process.env.REACT_APP_BACKEND}/annotation/get_file/${docId}`
     )
 
-
     const [bboxes, setBboxes] = useState( [] )
     const [actualBboxes, setactualBboxes] = useState( [] )
 
@@ -278,6 +277,12 @@ function AnnotationPage () {
         navigate( `/dashboard` )
     }
 
+    const handleFieldChange = ( event ) => {
+        fields[currentField]['value'] = event.target.value
+        setFields( [...fields] )
+    }
+
+
     return (
         <div class="mt-8 pb-24 dark:bg-gray-800">
             <DownloadModal
@@ -303,7 +308,7 @@ function AnnotationPage () {
                     </div>
                     <TButton
                         onClick={handleAnnotationSave}
-                        label="Save and exit"
+                        label="Save & Next"
                     ></TButton>
                 </div>
                 <div class="flex justify-between">
@@ -401,6 +406,7 @@ function AnnotationPage () {
                                     label={field['name']}
                                     handleRef={( event, index ) => setCurrentField( index )}
                                     value={field['value']}
+                                    handleFieldNameChange={handleFieldChange}
                                 />
                             </div>
                         ) )}
@@ -413,7 +419,7 @@ function AnnotationPage () {
                         onScroll={handleScrollEvent}
                         ref={imgContainerRef}
                     >
-                        {annotationStatus && imgUrl && (
+                        {fields && imgUrl && (
                             <img
                                 ref={imageRef}
                                 src={imgUrl}

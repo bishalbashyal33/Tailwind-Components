@@ -27,7 +27,8 @@ function LogIn () {
 
         dispatch( userLogin( userCredentials ) )
             .then( ( res ) => {
-                window.location.href = '/dashboard'
+                navigate( "/dashboard" )
+                // window.location.href = '/dashboard'
             } )
             .catch( ( err ) => {
                 navigate( '/login' )

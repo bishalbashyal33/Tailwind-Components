@@ -18,7 +18,7 @@ function Navbar ( props ) {
             <div class="container flex flex-wrap items-center justify-between mx-auto">
                 <a href="/" class="flex items-center">
                     <img
-                        src="https://flowbite.com/docs/images/logo.svg"
+                        src="../docbite.png"
                         class="h-6 mr-3 sm:h-9"
                         alt="Flowbite Logo"
                     />

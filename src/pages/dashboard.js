@@ -120,7 +120,7 @@ function DashBoard () {
                             </button>
                             <a href="/" class="flex ml-2 md:mr-24">
                                 <img
-                                    src="https://flowbite.com/docs/images/logo.svg"
+                                    src="../docbite.png"
                                     class="h-8 mr-3"
                                     alt="DocBite Logo"
                                 />

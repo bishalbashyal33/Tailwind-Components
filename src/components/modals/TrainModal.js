@@ -134,7 +134,7 @@ function TrainModal ( { isOpen, onCloseModal, setModel } ) {
                                 value={epoch}
                                 id="epoch_number"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="John"
+                                placeholder="epoch number"
                                 required
                             />
                         </div>
@@ -153,7 +153,7 @@ function TrainModal ( { isOpen, onCloseModal, setModel } ) {
                                 id="epoch_number"
                                 value={train_split}
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="John"
+                                placeholder="Split ratio"
                                 required
                             />
                         </div>
@@ -172,7 +172,7 @@ function TrainModal ( { isOpen, onCloseModal, setModel } ) {
                                 id="batch_size"
                                 value={batch_size}
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="John"
+                                placeholder="batch"
                                 required
                             />
                         </div>

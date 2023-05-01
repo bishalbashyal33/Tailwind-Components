@@ -73,6 +73,7 @@ function JsonPage () {
                 //handle success
                 setDocMeta( data.data )
                 setFields( data.data['fields'] )
+                navigate( "/dashboard" )
             } )
             .catch( function ( response ) {
                 //handle error
