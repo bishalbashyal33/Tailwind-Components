@@ -11,13 +11,11 @@ function DocumentTypes ( { updateDocTypes } ) {
 
     useEffect( () => {
         // Get all the document types
-        console.log( 'dashboard: Fetching all the document types' )
         axios( `${process.env.REACT_APP_BACKEND}/doc_type/get_all/`, {
             method: 'GET',
             withCredentials: true,
         } )
             .then( ( res ) => {
-                console.log( res )
                 setDocTypes( res.data )
             } )
             .catch( ( err ) => {
@@ -27,7 +25,6 @@ function DocumentTypes ( { updateDocTypes } ) {
 
 
     const createNewDocumentType = ( event ) => {
-        console.log( 'Creating new document type' )
         axios
             .post(
                 `${process.env.REACT_APP_BACKEND}/doc_type/post/`,
@@ -60,7 +57,6 @@ function DocumentTypes ( { updateDocTypes } ) {
     }
 
     const handleDocTypeDelete = ( id ) => {
-        console.log( 'Deleting document type' )
         updateDocTypes( docTypes.filter( ( doc ) => doc.id !== id ) )
     }
 

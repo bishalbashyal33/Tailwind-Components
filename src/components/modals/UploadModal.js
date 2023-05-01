@@ -39,8 +39,6 @@ function UploadModal ( { isOpen, onCloseModal, selectedDocType } ) {
     }
 
     const handleUpload = async ( event ) => {
-        console.log( 'Clicked upload button' )
-        console.log( file )
         event.preventDefault()
 
         if ( file ) {
@@ -69,8 +67,8 @@ function UploadModal ( { isOpen, onCloseModal, selectedDocType } ) {
             id="modal-overlay"
             onClick={handleOverlayClick}
             className={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${isOpen
-                    ? 'opacity-100 pointer-events-auto'
-                    : 'opacity-0 pointer-events-none'
+                ? 'opacity-100 pointer-events-auto'
+                : 'opacity-0 pointer-events-none'
                 }`}
         >
             <div class="relative w-full h-full max-w-2xl md:h-auto">

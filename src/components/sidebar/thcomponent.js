@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-function Th(props) {
-    const [checked, setChecked] = useState(props.selected.includes(props.docId))
+function Th ( props ) {
+    const [checked, setChecked] = useState( props.selected.includes( props.docId ) )
 
-    const handleCheckClick = (event) => {
-        console.log(props)
-        setChecked(!checked)
-        if (event.target.checked) {
-            props.setSelected([...props.selected, props.docId])
+    const handleCheckClick = ( event ) => {
+        setChecked( !checked )
+        if ( event.target.checked ) {
+            props.setSelected( [...props.selected, props.docId] )
         } else {
             props.setSelected(
-                props.selected.filter((item) => item !== props.docId)
+                props.selected.filter( ( item ) => item !== props.docId )
             )
         }
     }

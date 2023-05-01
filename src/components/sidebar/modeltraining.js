@@ -17,9 +17,6 @@ function ModelTraining ( props ) {
     const dispatch = useDispatch()
 
     const handleCheckClick = ( event, model_id ) => {
-        console.log( 'Handled check click' )
-        console.log( selected )
-
         if ( event.target.checked ) {
             setSelected( [...selected, model_id] )
         } else {
@@ -68,9 +65,6 @@ function ModelTraining ( props ) {
     function handleCloseModal () {
         setIsOpen( false )
     }
-    console.log( 'Inside the model training component' )
-
-
     return (
         <div class="p-4 sm:ml-64">
             <ToastContainer />

@@ -413,7 +413,7 @@ function AnnotationPage () {
                         onScroll={handleScrollEvent}
                         ref={imgContainerRef}
                     >
-                        {imgUrl && (
+                        {annotationStatus && imgUrl && (
                             <img
                                 ref={imageRef}
                                 src={imgUrl}
