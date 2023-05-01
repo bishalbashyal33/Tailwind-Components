@@ -83,7 +83,8 @@ function JsonPage () {
 
     const handleExit = ( e ) => {
         e.preventDefault()
-        navigate( `/dashboard` )
+        // navigate( `/dashboard` )
+        window.location.href = "/dashboard"
     }
 
     return (

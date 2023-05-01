@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLocation, useParams } from 'react-router-dom'
 
+import Loader from "../components/Loading"
 import TButton from '../components/tbutton'
 import JsonSpanElement from '../components/jsonspanelement'
 import DownloadModal from '../components/modals/DownloadModal'
@@ -20,6 +21,7 @@ function AnnotationPage () {
     const [imgUrl, setImgUrl] = useState(
         `${process.env.REACT_APP_BACKEND}/annotation/get_file/${docId}`
     )
+    console.log( "New docid: ", docId )
 
     const [bboxes, setBboxes] = useState( [] )
     const [actualBboxes, setactualBboxes] = useState( [] )
@@ -48,6 +50,7 @@ function AnnotationPage () {
                 return documentList.findIndex( ( doc ) => doc.image_id == docId )
             else return 0
         } )
+        console.log( "Document List: ", documentList )
         setImgUrl(
             `${process.env.REACT_APP_BACKEND}/annotation/get_file/${docId}`
         )
@@ -65,7 +68,7 @@ function AnnotationPage () {
                     res.data.annotation.map( ( field ) => ( {
                         id: field.id,
                         name: field.name,
-                        value: field.value || '',
+                        value: Array.isArray( field.value ) ? field.value.join( " " ) : String( field.value ),
                         word_ids: field.word_ids || [],
                     } ) )
                 )
@@ -414,59 +417,65 @@ function AnnotationPage () {
 
                 {/* This component contains all the features for annotation */}
                 <div class="flex-1 flex flex-col h-screen justify-center ml-8 overflow-clip">
-                    <div
-                        class="h-890 overflow-x-scroll scrollbar-hide img-container"
-                        onScroll={handleScrollEvent}
-                        ref={imgContainerRef}
-                    >
-                        {fields && imgUrl && (
-                            <img
-                                ref={imageRef}
-                                src={imgUrl}
-                                alt="Document Image"
-                                id="document-image"
-                                class="h-890 mx-auto  object-contain"
-                                style={{
-                                    width: imageWidth,
-                                    maxWidth: 'none',
-                                    maxHeight: '890',
-                                }}
-                                onMouseDown={handleMouseDown}
-                                onMouseMove={handleMouseMove}
-                                onClick={( event ) => handleImageClick( event )}
-                            />
-                        )}
-                        {isDrawing && <div style={rectStyle}></div>}
+                    {!bboxes && ( <Loader /> )}
+                    {bboxes &&
+                        <>
+                            <div
+                                class="h-890 overflow-x-scroll scrollbar-hide img-container"
+                                onScroll={handleScrollEvent}
+                                ref={imgContainerRef}
+                            >
+                                {fields && imgUrl && (
+                                    <img
+                                        ref={imageRef}
+                                        src={imgUrl}
+                                        alt="Document Image"
+                                        id="document-image"
+                                        class="h-890 mx-auto  object-contain"
+                                        style={{
+                                            width: imageWidth,
+                                            maxWidth: 'none',
+                                            maxHeight: '890',
+                                        }}
+                                        onMouseDown={handleMouseDown}
+                                        onMouseMove={handleMouseMove}
+                                        onClick={( event ) => handleImageClick( event )}
+                                    />
+                                )}
+                                {isDrawing && <div style={rectStyle}></div>}
 
-                        {/* This component is responsible for displaying the bounding boxes of the texts */}
-                        <div className="bboxes">
-                            {bboxes &&
-                                bboxes.map( ( bbox, index ) => {
-                                    if ( bbox[4].trim().length > 0 ) {
-                                        return (
-                                            <div
-                                                key={index}
-                                                id={index}
-                                                onClick={( event ) =>
-                                                    handleBboxClick(
-                                                        event,
-                                                        bbox,
-                                                        index
-                                                    )
-                                                }
-                                                className="bbox"
-                                                style={{
-                                                    left: bbox[0],
-                                                    top: bbox[1],
-                                                    width: bbox[2],
-                                                    height: bbox[3],
-                                                }}
-                                            ></div>
-                                        )
-                                    }
-                                } )}
-                        </div>
-                    </div>
+                                {/* This component is responsible for displaying the bounding boxes of the texts */}
+                                <div className="bboxes">
+                                    {bboxes &&
+                                        bboxes.map( ( bbox, index ) => {
+                                            if ( bbox[4].trim().length > 0 ) {
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        id={index}
+                                                        onClick={( event ) =>
+                                                            handleBboxClick(
+                                                                event,
+                                                                bbox,
+                                                                index
+                                                            )
+                                                        }
+                                                        className="bbox"
+                                                        style={{
+                                                            left: bbox[0],
+                                                            top: bbox[1],
+                                                            width: bbox[2],
+                                                            height: bbox[3],
+                                                        }}
+                                                    ></div>
+                                                )
+                                            }
+                                        } )}
+                                </div>
+                            </div>
+                        </>
+                    }
+
                 </div>
             </div>
         </div>

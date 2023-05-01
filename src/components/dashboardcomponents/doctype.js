@@ -96,13 +96,13 @@ function DocType ( props ) {
 
             <ul class="mb-2 tracking-tight text-gray-900 dark:text-gray-200">
                 <li>
-                    Uploaded:<strong>1</strong>
+                    Uploaded:<strong>{props.doc.metadata.uploaded || 0} </strong>
                 </li>
                 <li>
-                    Review Pending: <strong>1</strong>
+                    Review Pending: <strong>{props.doc.metadata.reviewed || 0} </strong>
                 </li>
                 <li>
-                    Approved: <strong>0</strong>
+                    Approved: <strong>{props.doc.metadata.processed || 0} </strong>
                 </li>
             </ul>
             <div class="flex justify-between">

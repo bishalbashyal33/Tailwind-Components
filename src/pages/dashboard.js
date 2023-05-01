@@ -43,7 +43,7 @@ function DashBoard () {
             withCredentials: true,
         } )
             .then( ( res ) => {
-                setDocTypes( res.data )
+                setDocTypes( res.data.doctypes )
             } )
             .catch( ( err ) => {
                 console.log( err )
