@@ -39,7 +39,6 @@ function SettingModal ( { isOpen, onCloseModal, doc_type_details } ) {
             withCredentials: true,
         } )
             .then( ( res ) => {
-                console.log( res )
                 setModels( res.data.models )
             } )
             .catch( ( err ) => {

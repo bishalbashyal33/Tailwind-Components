@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
 import ModalBtn from '../dropdowns/ModelButton'
 
-function TrainModal ( { isOpen, onCloseModal, setModels } ) {
+function TrainModal ( { isOpen, onCloseModal, setModel } ) {
     const [docTypes, setDocTypes] = useState( [] )
     function handleOverlayClick ( e ) {
         if ( e.target.id === 'modal-overlay' ) {
@@ -11,14 +11,12 @@ function TrainModal ( { isOpen, onCloseModal, setModels } ) {
     }
 
     useEffect( () => {
-        console.log( 'trainmodal: Fetching all the document types' )
         // Get all the document types
         axios( `${process.env.REACT_APP_BACKEND}/doc_type/get_all/`, {
             method: 'GET',
             withCredentials: true,
         } )
             .then( ( res ) => {
-                console.log( res )
                 setDocTypes( res.data )
             } )
             .catch( ( err ) => {
@@ -44,7 +42,7 @@ function TrainModal ( { isOpen, onCloseModal, setModels } ) {
                 {
                     doc_type: doc_type,
                     train_split: train_split,
-                    epoch: epoch,
+                    epochs: epoch,
                     batch: batch_size
                 },
                 {
@@ -55,16 +53,15 @@ function TrainModal ( { isOpen, onCloseModal, setModels } ) {
                 { withCredentials: true }
             )
             .then( ( response ) => {
-                console.log( 'Request successful', response.data )
-                setModels( ( models ) => [...models, response.data] )
+                setModel( ( models ) => [...models, response.data] )
             } )
             .catch( function ( response ) {
                 console.log( response )
             } )
         onCloseModal()
     }
+
     const handleDropdown = ( e ) => {
-        console.log( 'Drop down button clicked', opendropdown )
         setOpenDropdown( !opendropdown )
     }
 

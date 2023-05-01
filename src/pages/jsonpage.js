@@ -26,7 +26,6 @@ function JsonPage () {
         } )
             .then( ( response ) => response.data )
             .then( ( data ) => {
-                console.log( 'Response data: ', data )
                 setDocMeta( data['meta'] )
                 setFields( data['meta']['fields'] )
                 setFileId( data['file_id'] )
@@ -55,11 +54,9 @@ function JsonPage () {
     }
 
     const saveFieldData = ( event ) => {
-        console.log( 'fields: ', fields )
         docMeta.fields = fields
         docMeta['task_type'] = 'Token Classification'
         docMeta['model'] = 'ML'
-        console.log( 'docMeta', docMeta )
         axios
             .post(
                 `${process.env.REACT_APP_BACKEND}/doc_type/update/${docType}`,

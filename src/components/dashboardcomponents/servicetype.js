@@ -13,6 +13,7 @@ function SerType ( props ) {
     function handleCloseModal () {
         setIsOpen( false )
     }
+    console.log( apiDetail.status, "Bool check: ", apiDetail.status === true, apiDetail.status === false )
     return (
         <div class="block max-w-sm mx-2 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
             {isOpen && (

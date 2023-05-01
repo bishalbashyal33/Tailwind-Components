@@ -53,8 +53,6 @@ function UploadPage ( props ) {
         axios
             .get( `${process.env.REACT_APP_BACKEND}/file/status/${jsonResponse.file_id}` )
             .then( ( response ) => {
-                console.log( response.json );
-
                 // Create a Blob object from the response JSON
                 const blob = new Blob( [JSON.stringify( response.data )], {
                     type: "application/json",

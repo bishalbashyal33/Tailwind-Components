@@ -11,14 +11,11 @@ export const userLogin = createAsyncThunk(
                     'Content-Type': 'application/json',
                 },
             }
-            console.log( 'Before sending the login request' )
             const { data } = await axios.post( `${process.env.REACT_APP_BACKEND}/user/signin`,
                 { email: email, password: password },
                 config
             )
-            console.log( "Storing the user's token in local storage" )
             // store user's token in local storage
-            console.log( 'user details: ', data )
             localStorage.setItem( 'user_id', data.user_id )
             localStorage.setItem( 'username', data.username )
             localStorage.setItem( 'email', data.email )
@@ -45,7 +42,6 @@ export const userSignup = createAsyncThunk(
                     'Content-Type': 'application/json',
                 },
             }
-            console.log( 'Before sending the login request' )
             const { data } = await axios.post(
                 `${process.env.REACT_APP_BACKEND}/user/signup`,
                 {
@@ -56,7 +52,6 @@ export const userSignup = createAsyncThunk(
                 },
                 config
             )
-            console.log( "Storing the user's token in local storage" )
             // store user's token in local storage
             return data
         } catch ( error ) {

@@ -25,7 +25,6 @@ function LogIn () {
             password: password,
         }
 
-        console.log( userCredentials )
         dispatch( userLogin( userCredentials ) )
             .then( ( res ) => {
                 window.location.href = '/dashboard'

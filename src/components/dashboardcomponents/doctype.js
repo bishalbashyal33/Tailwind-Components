@@ -8,13 +8,7 @@ function DocType ( props ) {
 
     const handleDocumentDelete = ( event ) => {
         event.preventDefault()
-        console.log(
-            'Document Delete Request Sent for document id: ',
-            props['doc']['id']
-        )
         props.handleDocTypeDelete( props['doc']['id'] )
-        console.log( 'Document Deleted Successfully', props['doc']['id'] )
-
         axios
             .post( `${process.env.REACT_APP_BACKEND}/doc_type/delete/${props['doc']['id']}`, {
                 withCredentials: true,

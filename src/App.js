@@ -1,5 +1,5 @@
 import Navbar from './components/navbar'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Footer from './components/footer'
 import HomePage from './pages/homepage'
 import UploadPage from './pages/uploadpage'
@@ -10,15 +10,22 @@ import AboutPage from './pages/about'
 import JsonPage from './pages/jsonpage'
 import AnnotationPage from './pages/annotation'
 import Protected from './components/ProtectedRoute'
+import { useState, useEffect } from "react"
 
 export default function App () {
+    const [pathname, setPathname] = useState( window.location.pathname )
+    const location = useLocation()
+    useEffect( () => {
+        setPathname( location.pathname )
+    }, [location.pathname] )
+
+    const showNavbar = !pathname.includes( '/dashboard' ) && !pathname.includes( '/jsonpage' ) && !pathname.includes( '/annotate' )
+
     return (
-        <Router>
-            {!window.location.pathname.includes( '/dashboard' ) &&
-                !window.location.pathname.includes( '/jsonpage' ) &&
-                !window.location.pathname.includes( '/annotate' ) && (
-                    <Navbar />
-                )}
+        <>
+            {showNavbar && (
+                <Navbar />
+            )}
 
             <Routes>
                 <Route exact path="/" element={<HomePage />} />
@@ -55,11 +62,9 @@ export default function App () {
                 />
             </Routes>
 
-            {!window.location.pathname.includes( '/dashboard' ) &&
-                !window.location.pathname.includes( '/jsonpage' ) &&
-                !window.location.pathname.includes( '/annotate' ) && (
-                    <Footer />
-                )}
-        </Router>
+            {showNavbar && (
+                <Footer />
+            )}
+        </>
     )
 }

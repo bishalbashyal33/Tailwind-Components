@@ -30,8 +30,6 @@ function DashBoard () {
     const handleTabClick = ( tab ) => {
         var prevTab = document.getElementById( activeTab )
         if ( prevTab ) prevTab.classList.remove( 'dark:bg-gray-700' )
-        console.log( "prevTab: ", prevTab, "\nNew tab: ", tab )
-
         setActiveTab( tab )
         navigate( `/dashboard` )
         const element = document.getElementById( tab )
@@ -40,13 +38,11 @@ function DashBoard () {
 
     useEffect( () => {
         // Get all the document types
-        console.log( 'dashboard: Fetching all the document types' )
         axios( `${process.env.REACT_APP_BACKEND}/doc_type/get_all/`, {
             method: 'GET',
             withCredentials: true,
         } )
             .then( ( res ) => {
-                console.log( res )
                 setDocTypes( res.data )
             } )
             .catch( ( err ) => {
@@ -55,7 +51,6 @@ function DashBoard () {
     }, [] )
 
     useEffect( () => {
-        console.log( 'dashboard: useEffect called', location.pathname )
         setPathname( location.pathname )
     }
         , [location.pathname] )
@@ -63,7 +58,6 @@ function DashBoard () {
     const renderPageContent = () => {
         switch ( activeTab ) {
             case 'DocumentType':
-                console.log( 'DocumentType' )
                 return (
                     <DocumentTypes
                         docTypes={docTypes}
@@ -71,19 +65,14 @@ function DashBoard () {
                     />
                 )
             case 'MyDocuments':
-                console.log( 'MyDocuments' )
                 return <MyDocuments />
             case 'Model&Training':
-                console.log( 'Model&Training' )
                 return <ModelTraining />
             case 'API&Services':
-                console.log( 'API&Services' )
                 return <APIService />
             case 'Settings':
-                console.log( 'Settings' )
                 return <Settings />
             default:
-                console.log( 'DocumentType' )
                 return <DocumentTypes />
         }
     }

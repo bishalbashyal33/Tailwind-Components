@@ -9,7 +9,6 @@ function Navbar ( props ) {
     const { user_id, session_id, error } = useSelector( ( state ) => state.auth )
 
     const handleSignout = async ( e ) => {
-        console.log( 'sign out' )
         dispatch( logout() )
         navigate( '/' )
     }

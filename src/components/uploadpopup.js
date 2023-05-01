@@ -3,15 +3,11 @@ import { saveAs } from 'file-saver'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 function UPopup ( props ) {
     const [file, setFile] = useState( null )
-    // const notify = () => ( toastId.current = toast( 'Lorem ipsum dolor' ) )
-    // const toastId = React.useRef( null )
-    // const openToast = () => {
-    //     console.log( 'Toast clicked' )
-
-    // }
+    const navigate = useNavigate()
     const handleFileSelect = () => {
         const fileInput = document.createElement( 'input' )
         fileInput.setAttribute( 'type', 'file' )
@@ -37,10 +33,9 @@ function UPopup ( props ) {
         // Trigger a click event on the file input element
         fileInput.click()
     }
+    const delay = ms => new Promise( res => setTimeout( res, ms ) );
 
     const handleUpload = async ( event ) => {
-        console.log( 'Clicked upload button' )
-        console.log( file )
         event.preventDefault()
 
         if ( file ) {
@@ -51,12 +46,7 @@ function UPopup ( props ) {
             }
 
             // Send the FormData object as the request body in the POST request
-            console.log(
-                'sending multiple imaeg to backend',
-                file,
-                props.selectedDocType
-            )
-            const response = axios.post(
+            const res = axios.post(
                 `${process.env.REACT_APP_BACKEND}/annotation/post/multiple/${props.selectedDocType}`,
                 formData,
                 {
@@ -65,13 +55,10 @@ function UPopup ( props ) {
                     },
                 }
             )
-            setFile( null )
+            toast.success( 'File uploaded successfully', { autoClose: 1000, position: "bottom-right", theme: "dark", } )
+            await delay( 1000 )
+            setFile( null );
             window.location.href = '/dashboard'
-            // if ( response.status == 200 ) {
-            //     return toast( 'Will close after 7s', { autoClose: 3000 } )
-            // }
-            // console.log( response )
-            // setFile( null )
         }
     }
 
@@ -84,7 +71,6 @@ function UPopup ( props ) {
             props.setSelectedDocType( '' )
         }
     }
-    console.log( 'Opened dialog for image upload' )
     return (
         <div
             id="staticModal"
@@ -95,6 +81,7 @@ function UPopup ( props ) {
             class={`fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-30 flex justify-center items-center z-50 ${props.selectedDocType ? '' : 'hidden'
                 } :h-full`}
         >
+            <ToastContainer />
             <div class="relative w-full h-full max-w-2xl md:h-auto">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
